@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--基础样式-->
+    <style name="GenjiDialog" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <!--显示背景模糊-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <!--基础样式 dialog全屏 只有在沉浸式状态栏时用到-->
+    <style name="GenjiDialogFullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--dialog能够越过statusBar-->
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <!--带遮罩的滑出背景渐变-->
+    <style name="MaskAlphaADAnimation" parent="android:Animation">
+        <item name="android:windowExitAnimation">@anim/alpha_exit_anim</item>
+    </style>
+
+    <!--以下4个方向的插值器为 先加速->再减速-->
+    <!--下方平移淡入淡出-->
+    <style name="BottomTransAlphaADAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/bottom_trans_alpha_ad_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/bottom_trans_alpha_ad_exit_anim</item>
+    </style>
+
+    <!--上方平移淡入淡出-->
+    <style name="TopTransAlphaADAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/top_trans_alpha_ad_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/top_trans_alpha_ad_exit_anim</item>
+    </style>
+
+    <!--左边平移淡入淡出-->
+    <style name="LeftTransAlphaADAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/left_trans_alpha_ad_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/left_trans_alpha_ad_exit_anim</item>
+    </style>
+
+    <!--右边平移淡入淡出-->
+    <style name="RightTransAlphaADAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/right_trans_alpha_ad_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/right_trans_alpha_ad_exit_anim</item>
+    </style>
+
+    <!--以下4个方向的插值器为  持续加速-->
+    <!--下方平移淡入淡出-->
+    <style name="BottomTransAlphaAcceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/bottom_trans_alpha_acce_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/bottom_trans_alpha_acce_exit_anim</item>
+    </style>
+
+    <!--上方平移淡入淡出-->
+    <style name="TopTransAlphaAcceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/top_trans_alpha_acce_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/top_trans_alpha_acce_exit_anim</item>
+    </style>
+
+    <!--左边平移淡入淡出-->
+    <style name="LeftTransAlphaAcceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/left_trans_alpha_acce_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/left_trans_alpha_acce_exit_anim</item>
+    </style>
+
+    <!--右边平移淡入淡出-->
+    <style name="RightTransAlphaAcceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/right_trans_alpha_acce_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/right_trans_alpha_acce_exit_anim</item>
+    </style>
+
+    <!--以下4个方向的插值器为  逐渐减速-->
+    <!--下方平移淡入淡出-->
+    <style name="BottomTransAlphaDeceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/bottom_trans_alpha_dece_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/bottom_trans_alpha_dece_exit_anim</item>
+    </style>
+
+    <!--上方平移淡入淡出-->
+    <style name="TopTransAlphaDeceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/top_trans_alpha_dece_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/top_trans_alpha_dece_exit_anim</item>
+    </style>
+
+    <!--左边平移淡入淡出-->
+    <style name="LeftTransAlphaDeceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/left_trans_alpha_dece_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/left_trans_alpha_dece_exit_anim</item>
+    </style>
+
+    <!--右边平移淡入淡出-->
+    <style name="RightTransAlphaDeceAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/right_trans_alpha_dece_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/right_trans_alpha_dece_exit_anim</item>
+    </style>
+
+    <!--淡入淡出-->
+    <style name="AlphaEnterExitAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/alpha_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/alpha_exit_anim</item>
+    </style>
+
+
+    <!--有回弹的放大缩小淡入淡出  左上角缩放  pivotX=0%,pivotY=0%-->
+    <style name="ScaleOverShootEnterExitAnimationX0Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_0_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  顶部中心点缩放  pivotX=50%,pivotY=0%-->
+    <style name="ScaleOverShootEnterExitAnimationX50Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_0_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  右上角缩放  pivotX=100%,pivotY=0%-->
+    <style name="ScaleOverShootEnterExitAnimationX100Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_0_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  左侧中心点缩放  pivotX=0%,pivotY=50%-->
+    <style name="ScaleOverShootEnterExitAnimationX0Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_50_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  正中心点缩放  pivotX=50%,pivotY=50%-->
+    <style name="ScaleOverShootEnterExitAnimationX50Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_50_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  右侧中心点缩放  pivotX=100%,pivotY=50%-->
+    <style name="ScaleOverShootEnterExitAnimationX100Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_50_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  左下角缩放  pivotX=0%,pivotY=100%-->
+    <style name="ScaleOverShootEnterExitAnimationX0Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_0_y_100_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  下方中心点缩放  pivotX=50%,pivotY=100%-->
+    <style name="ScaleOverShootEnterExitAnimationX50Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_50_y_100_exit</item>
+    </style>
+
+    <!--有回弹的放大缩小淡入淡出  右下角缩放  pivotX=100%,pivotY100%-->
+    <style name="ScaleOverShootEnterExitAnimationX100Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_overshoot_anim_for_x_100_y_100_exit</item>
+    </style>
+
+
+    <!--先加速->再减速的放大缩小淡入淡出  左上角缩放  pivotX=0%,pivotY=0%-->
+    <style name="ScaleADEnterExitAnimationX0Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_0_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  顶部中心点缩放  pivotX=50%,pivotY=0%-->
+    <style name="ScaleADEnterExitAnimationX50Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_0_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  右上角缩放  pivotX=100%,pivotY=0%-->
+    <style name="ScaleADEnterExitAnimationX100Y0" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_0_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_0_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  左侧中心点缩放  pivotX=0%,pivotY=50%-->
+    <style name="ScaleADEnterExitAnimationX0Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_50_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  正中心点缩放  pivotX=50%,pivotY=50%-->
+    <style name="ScaleADEnterExitAnimationX50Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_50_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  右侧中心点缩放  pivotX=100%,pivotY=50%-->
+    <style name="ScaleADEnterExitAnimationX100Y50" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_50_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_50_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  左下角缩放  pivotX=0%,pivotY=100%-->
+    <style name="ScaleADEnterExitAnimationX0Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_0_y_100_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  下方中心点缩放  pivotX=50%,pivotY=100%-->
+    <style name="ScaleADEnterExitAnimationX50Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_50_y_100_exit</item>
+    </style>
+
+    <!--先加速->再减速的放大缩小淡入淡出  右下角缩放  pivotX=100%,pivotY100%-->
+    <style name="ScaleADEnterExitAnimationX100Y100" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_100_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_alpha_ad_anim_for_x_100_y_100_exit</item>
+    </style>
+
+</resources>
