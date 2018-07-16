@@ -2,11 +2,10 @@ package com.ly.genjidialogv2
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
-import com.ly.genjidialog.extensions.addShowDismissListener
+import android.transition.Slide
+import android.view.Gravity
 import com.ly.genjidialog.extensions.convertListenerFun
 import com.ly.genjidialog.extensions.newGenjiDialog
-import com.ly.genjidialog.extensions.onKeyListenerFun
 import com.ly.genjidialog.other.DialogGravity
 import kotlinx.android.synthetic.main.aaa.view.*
 import kotlinx.android.synthetic.main.activity_loading.*
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
         //********************activity_loading的dialog代码
         showLoading.setOnClickListener {
-            newGenjiDialog {
+            val aaa = newGenjiDialog {
                 //设置布局
                 layoutId = R.layout.aaa
                 //设置宽度
@@ -116,29 +115,29 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 //添加show/dismiss时的监听事件
-                addShowDismissListener("eventKey") {
+                /*addShowDismissListener("eventKey") {
                     onDialogShow {
                         Toast.makeText(this@MainActivity, "show", Toast.LENGTH_SHORT).show()
                     }
                     onDialogDismiss {
                         Toast.makeText(this@MainActivity, "dismiss", Toast.LENGTH_SHORT).show()
                     }
-                }
+                }*/
                 //监听按键
-                onKeyListenerFun { dialog, keyCode, event ->
+                /*onKeyListenerFun { dialog, keyCode, event ->
                     return@onKeyListenerFun false
-                }
+                }*/
                 //有遮罩的滑出位置
-                //slideGravity = Gravity.TOP
+                slideGravity = Gravity.TOP
                 //阴影透明度
-                dimAmount = 0.3f
+                dimAmount = 0f
                 //动画
-                animStyle = R.style.ScaleOverShootEnterExitAnimationX0Y0
+                animStyle =R.style.MaskAlphaADAnimation
                 //相对view的偏移
-                offsetX = -showLoading.width / 2
-                offsetY = -showLoading.height / 2
+                //offsetX = -showLoading.width / 2
+                //offsetY = -showLoading.height / 2
                 //相对View的位置
-                gravityAsView = DialogGravity.RIGHT_BOTTOM
+                gravityAsView = DialogGravity.CENTER_BOTTOM
                 //showOnWindow的偏移
                 //verticalMargin = dp2px(100f).toFloat()
                 //horizontalMargin = dp2px(100f).toFloat()

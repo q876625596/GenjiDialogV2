@@ -8,11 +8,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.transition.Scene
 import android.transition.Slide
+import android.transition.Transition
 import android.transition.TransitionManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOverStatusBar
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenWidth
@@ -61,6 +59,9 @@ open class GenjiDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //如果是继承了GenjiDialog，那么就会重写extendsOptions()方法
         //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions
+        //dialog.window.exitTransition = Slide(Gravity.TOP)
+        //this.enterTransition = Slide(Gravity.TOP)
+        dialog.requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
         extendsOptions()?.let {
             dialogOptions = it
         }
@@ -245,7 +246,7 @@ open class GenjiDialog : DialogFragment() {
                  }
                  return@let
              }*/
-            window.setWindowAnimations(dialogOptions.animStyle)
+            window.setWindowAnimations(dialogOptions.animStyle?:0)
             dialogOptions.slideGravity?.let {
                 val view = window.findViewById<View>(android.R.id.content)
                 val viewGroup = view.parent as ViewGroup
@@ -254,7 +255,6 @@ open class GenjiDialog : DialogFragment() {
                         view)
                 TransitionManager.go(scene, Slide(it))
             }
-
         }
         //设置是否点击外部不消失
         isCancelable = dialogOptions.outCancel
@@ -263,7 +263,6 @@ open class GenjiDialog : DialogFragment() {
         //设置按键拦截事件，一般在全屏显示需要重写返回键时用到
         setOnKeyListener()
     }
-
 
     /**
      * 重写按钮监听
@@ -285,7 +284,7 @@ open class GenjiDialog : DialogFragment() {
      * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
      * @param newAnim 新的动画(默认为上一次设置的动画)
      */
-    fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int = dialogOptions.animStyle): GenjiDialog {
+    fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle): GenjiDialog {
         executeShowListener()
         dialogOptions.apply {
             this.gravity = gravity
@@ -303,7 +302,7 @@ open class GenjiDialog : DialogFragment() {
      * @param newAnim 新的动画(默认为上一次设置的动画)
      * @param tag
      */
-    fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int = dialogOptions.animStyle, tag: String?): GenjiDialog {
+    fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle, tag: String?): GenjiDialog {
         executeShowListener()
         dialogOptions.apply {
             this.gravity = gravity
@@ -315,13 +314,14 @@ open class GenjiDialog : DialogFragment() {
         return this
     }
 
+
     /**
      * @param manager
      * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
      * @param newAnim 新的动画(默认为上一次设置的动画)
      * @param tag
      */
-    fun showNowOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int = dialogOptions.animStyle, tag: String?): GenjiDialog {
+    fun showNowOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle, tag: String?): GenjiDialog {
         executeShowListener()
         dialogOptions.apply {
             this.gravity = gravity
@@ -343,7 +343,7 @@ open class GenjiDialog : DialogFragment() {
      * 偏移量的定义请看{@link DialogOptions#dialogAsView(View,DialogGravity,Int,Int,Int) DialogOptions.dialogAsView}
      * @param offsetY y轴的偏移量，(默认为上一次设置过的偏移量)
      */
-    fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int = dialogOptions.animStyle, offsetX: Int = dialogOptions.offsetX, offsetY: Int = dialogOptions.offsetY): GenjiDialog {
+    fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle, offsetX: Int = dialogOptions.offsetX, offsetY: Int = dialogOptions.offsetY): GenjiDialog {
         executeShowListener()
         dialogOptions.dialogAsView(view, gravityAsView, newAnim, offsetX, offsetY)
         super.show(manager, System.currentTimeMillis().toString())

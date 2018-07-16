@@ -10,10 +10,10 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.R
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.unDisplayViewSize
+import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
 
@@ -43,7 +43,7 @@ class DialogOptions() : Parcelable {
      * 补间动画的style
      */
     @StyleRes
-    var animStyle = 0
+    var animStyle: Int? = 0
 
     /**
      * 带遮罩的滑出
@@ -380,7 +380,7 @@ class DialogOptions() : Parcelable {
      * @param offsetX x轴偏移量
      * @param offsetY y轴偏移量
      */
-    fun dialogAsView(view: View, gravityAsView: DialogGravity = this.gravityAsView, @StyleRes newAnim: Int = this.animStyle, offsetX: Int = this.offsetX, offsetY: Int = this.offsetY) {
+    fun dialogAsView(view: View, gravityAsView: DialogGravity = this.gravityAsView, @StyleRes newAnim: Int? = this.animStyle, offsetX: Int = this.offsetX, offsetY: Int = this.offsetY) {
         //依附于view
         asView = true
         //设置dialog的位置在屏幕的左上角，因为这样才能更好的计算最终位置
@@ -472,6 +472,9 @@ class DialogOptions() : Parcelable {
      * 当没有设置动画的时候，该方法会设置一个默认动画
      */
     fun loadAnim() {
+        if (animStyle == null) {
+            return
+        }
         if (animStyle != 0) {
             return
         }
