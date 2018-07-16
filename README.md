@@ -23,7 +23,7 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialog:1.1.8'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.0.0'
 }
 ```
 废话不多说，直接上图

@@ -4,6 +4,15 @@
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
+/.idea/build_file_checksums.ser
+/.idea/Project.xml
+/.idea/profiles_settings.xml
+/.idea/encodings.xml
+/.idea/gradle.xml
+/.idea/markdown-navigator.xml
+/.idea/misc.xml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml
 .DS_Store
 /build
 /captures
