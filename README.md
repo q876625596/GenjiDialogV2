@@ -1,6 +1,6 @@
 # GenjiDialog
 
-[![](https://jitpack.io/v/q876625596/GenjiDialog.svg)](https://jitpack.io/#q876625596/GenjiDialog)
+[![](https://jitpack.io/v/q876625596/GenjiDialogV2.svg)](https://jitpack.io/#q876625596/GenjiDialogV2)
 
 #### 基于kotlin的通用dialog
 
