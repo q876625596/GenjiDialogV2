@@ -1,5 +1,13 @@
 # GenjiDialog
 
+**<font size=5 color=#FF0000>
+红色加粗提醒，该库目前就我所知，所有的弹框需求都能实现，
+接下来就是优化代码和加一些新的功能，
+有些特殊的效果我在这里没有时间写出来（自定义animator曲线救国），
+有需要实现的效果或者不懂的可以提issues，
+我会去解答，预计在不久后会完善README，
+并且会发一篇来博客讲解(骗star :smirk:)</font>**
+
 [![](https://jitpack.io/v/q876625596/GenjiDialogV2.svg)](https://jitpack.io/#q876625596/GenjiDialogV2)
 
 #### 基于kotlin的通用dialog
@@ -23,7 +31,7 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.0.1'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.0.2'
 }
 ```
 废话不多说，直接上图

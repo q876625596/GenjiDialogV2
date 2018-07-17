@@ -1,5 +1,6 @@
 package com.ly.genjidialog.other
 
+import android.animation.Animator
 import android.graphics.Color
 import android.os.Build
 import android.os.Parcel
@@ -18,6 +19,24 @@ import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
 
 class DialogOptions() : Parcelable {
+
+    var canClick = true
+    /**
+     * 特殊需求的自定义进出动画
+     */
+    var enterAnimator: Animator? = null
+    var exitAnimator: Animator? = null
+
+    var setEnterAnimatorFun: ((contentView:View) -> Animator)? = null
+    var setExitAnimatorFun: ((contentView:View) -> Animator)? = null
+
+    fun setOnEnterAnimator(listener: (contentView:View) -> Animator) {
+        setEnterAnimatorFun = listener
+    }
+
+    fun setOnExitAnimator(listener: (contentView:View) -> Animator) {
+        setExitAnimatorFun = listener
+    }
 
     /**
      *  dialog样式
@@ -188,6 +207,7 @@ class DialogOptions() : Parcelable {
      * 事件监听
      */
     var convertListener: ViewConvertListener? = null
+
 
     /**
      * 返回是否是依附在view上

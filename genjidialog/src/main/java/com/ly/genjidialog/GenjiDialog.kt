@@ -6,15 +6,12 @@ import android.support.annotation.StyleRes
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import android.transition.Scene
-import android.transition.Slide
-import android.transition.Transition
-import android.transition.TransitionManager
 import android.view.*
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOverStatusBar
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenWidth
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.unDisplayViewSize
+import com.ly.genjidialog.extensions.addAnimatorListenerEx
 import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
@@ -125,12 +122,29 @@ open class GenjiDialog : DialogFragment() {
      * 主动dismiss时会在onStop前调用
      */
     override fun dismiss() {
-        //如果没有执行过监听操作才执行，并且把监听设为已执行状态
-        if (dismissed.compareAndSet(false, true)) {
-            executeDismissListener()
-            super.dismiss()
+        dialogOptions.exitAnimator.apply {
+            if (this == null) {
+                //如果没有执行过监听操作才执行，并且把监听设为已执行状态
+                if (dismissed.compareAndSet(false, true)) {
+                    executeDismissListener()
+                    super.dismiss()
 
+                }
+            } else {
+                //添加监听，在动画结束时调用真正的dismiss
+                this.addAnimatorListenerEx {
+                    onAnimatorEnd {
+                        if (dismissed.compareAndSet(false, true)) {
+                            executeDismissListener()
+                            super.dismiss()
+
+                        }
+                    }
+                }
+                this.start()
+            }
         }
+
     }
 
     /**
@@ -175,6 +189,14 @@ open class GenjiDialog : DialogFragment() {
     private fun initParams() {
         //设置dialog的初始化数据
         dialog.window?.let { window ->
+            //dialog显示对布局中view的自定义动画
+            dialogOptions.setEnterAnimatorFun?.invoke(window.decorView.findViewById(android.R.id.content))?.let {
+                dialogOptions.enterAnimator = it
+            }
+            //dialog隐藏对布局中view的自定义动画
+            dialogOptions.setExitAnimatorFun?.invoke(window.decorView.findViewById(android.R.id.content))?.let {
+                dialogOptions.exitAnimator = it
+            }
             window.statusBarColor = dialogOptions.dialogStatusBarColor
             dialogOptions.setStatusBarModeFun.invoke(this)
             //设置属性
@@ -230,31 +252,8 @@ open class GenjiDialog : DialogFragment() {
                     y = dialogOptions.dialogViewY
                 }
             }
-            //设置dialog进入、退出的动画
-            /* if (dialogOptions.animForValue != null) {
-                 dialogOptions.animForValue?.let {
-                     it.invoke(this).apply {
-                         setTarget(window.decorView.findViewById(android.R.id.content))
-                         start()
-                     }
-                 }
-                 return@let
-             }*/
-            /* if (dialogOptions.animForTween != null) {
-                 window.findViewById<View>(android.R.id.content)?.apply {
-                     startAnimation(dialogOptions.animForTween)
-                 }
-                 return@let
-             }*/
-            window.setWindowAnimations(dialogOptions.animStyle?:0)
-            dialogOptions.slideGravity?.let {
-                val view = window.findViewById<View>(android.R.id.content)
-                val viewGroup = view.parent as ViewGroup
-                viewGroup.removeView(view)
-                val scene = Scene(viewGroup,
-                        view)
-                TransitionManager.go(scene, Slide(it))
-            }
+            //设置dialog进入时内部view的动画
+            dialogOptions.enterAnimator?.start()
         }
         //设置是否点击外部不消失
         isCancelable = dialogOptions.outCancel
@@ -263,6 +262,8 @@ open class GenjiDialog : DialogFragment() {
         //设置按键拦截事件，一般在全屏显示需要重写返回键时用到
         setOnKeyListener()
     }
+
+
 
     /**
      * 重写按钮监听

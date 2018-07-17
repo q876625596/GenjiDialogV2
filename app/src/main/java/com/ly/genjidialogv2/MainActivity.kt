@@ -1,14 +1,16 @@
 package com.ly.genjidialogv2
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
-import android.transition.Slide
-import android.view.Gravity
-import com.ly.genjidialog.extensions.convertListenerFun
-import com.ly.genjidialog.extensions.newGenjiDialog
-import com.ly.genjidialog.other.DialogGravity
-import kotlinx.android.synthetic.main.aaa.view.*
+import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
+import com.ly.genjidialog.extensions.*
 import kotlinx.android.synthetic.main.activity_loading.*
+import kotlinx.android.synthetic.main.slide_test.view.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -101,17 +103,75 @@ class MainActivity : AppCompatActivity() {
         showLoading.setOnClickListener {
             val aaa = newGenjiDialog {
                 //设置布局
-                layoutId = R.layout.aaa
+                layoutId = R.layout.slide_test
                 //设置宽度
-                width = dp2px(100f)
+                //width = dp2px(100f)
                 //设置高度
-                height = dp2px(100f)
+                //height = dp2px(100f)
+                isFullHorizontal = true
+                isFullVerticalOverStatusBar = true
                 //当时showOnWindow时设置显示位置
                 //gravity = DialogGravity.RIGHT_TOP
                 //处理事件/数据绑定
                 convertListenerFun { view, holder, dialog ->
-                    view.image.setOnClickListener {
-                        dialog.dismiss()
+                    view.touchView.setOnClickListener {
+                        if (canClick){
+                            dialog.dismiss()
+                        }
+                    }
+                    view.topTouchView.setOnClickListener {
+                        if (canClick){
+                            dialog.dismiss()
+                        }
+                    }
+                }
+                setOnEnterAnimator { rootView ->
+
+                    AnimatorSet().apply {
+                        duration = 1000L
+                        val targetView = rootView.findViewById<View>(R.id.realView)
+                        val touchView = rootView.findViewById<View>(R.id.touchView)
+                        val topTouchView = rootView.findViewById<View>(R.id.topTouchView)
+                        val parentView = targetView.parent as ViewGroup
+                        parentView.layoutParams = (parentView.layoutParams as ConstraintLayout.LayoutParams).apply {
+                            topMargin = (showLoading.y + showLoading.height).toInt()
+                        }
+                        play(ObjectAnimator
+                                .ofFloat(targetView, "y", -UtilsExtension.dp2px(resources, 200f).toFloat(), 0f))
+                                .with(ObjectAnimator
+                                        .ofFloat(touchView, "alpha", 0f, 1f))
+                                .with(ObjectAnimator
+                                        .ofFloat(topTouchView, "alpha", 0f, 1f))
+                        addAnimatorListenerEx {
+                            onAnimatorStart {
+                                canClick = false
+                            }
+                            onAnimatorEnd {
+                                canClick = true
+                            }
+                        }
+                    }
+                }
+                setOnExitAnimator {
+                    AnimatorSet().apply {
+                        duration = 1000L
+                        val targetView = it.findViewById<View>(R.id.realView)
+                        val touchView = it.findViewById<View>(R.id.touchView)
+                        val topTouchView = it.findViewById<View>(R.id.topTouchView)
+                        play(ObjectAnimator
+                                .ofFloat(targetView, "y", 0f, -UtilsExtension.dp2px(resources, 200f).toFloat()))
+                                .with(ObjectAnimator
+                                        .ofFloat(touchView, "alpha", 1f, 0f))
+                                .with(ObjectAnimator
+                                        .ofFloat(topTouchView, "alpha", 1f, 0f))
+                        addAnimatorListenerEx {
+                            onAnimatorStart {
+                                canClick = false
+                            }
+                            onAnimatorEnd {
+                                canClick = true
+                            }
+                        }
                     }
                 }
                 //添加show/dismiss时的监听事件
@@ -127,17 +187,15 @@ class MainActivity : AppCompatActivity() {
                 /*onKeyListenerFun { dialog, keyCode, event ->
                     return@onKeyListenerFun false
                 }*/
-                //有遮罩的滑出位置
-                slideGravity = Gravity.TOP
                 //阴影透明度
                 dimAmount = 0f
                 //动画
-                animStyle =R.style.MaskAlphaADAnimation
+                animStyle = null
                 //相对view的偏移
                 //offsetX = -showLoading.width / 2
                 //offsetY = -showLoading.height / 2
                 //相对View的位置
-                gravityAsView = DialogGravity.CENTER_BOTTOM
+                //gravityAsView = DialogGravity.CENTER_BOTTOM
                 //showOnWindow的偏移
                 //verticalMargin = dp2px(100f).toFloat()
                 //horizontalMargin = dp2px(100f).toFloat()
@@ -146,12 +204,17 @@ class MainActivity : AppCompatActivity() {
                 //isFullVerticalOverStatusBar 该纵向占满全屏不会扣掉状态栏高度
                 //touchCancel 是否点击屏幕区域取消（不包含返回按钮）
                 //outCancel 是否点击外部取消 需要和touchCancel = false 一起使用
-            }.showOnView(supportFragmentManager, showLoading)
+            }.onKeyListenerFun { genjiDialo, dialogInterFace, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (genjiDialo.dialogOptions.canClick) {
+                        genjiDialo.dismiss()
+                        return@onKeyListenerFun true
+                    }else{
+                        return@onKeyListenerFun true
+                    }
+                }
+                return@onKeyListenerFun false
+            }.showOnWindow(supportFragmentManager)
         }
-    }
-
-    fun dp2px(dpValue: Float): Int {
-        val scale = resources.displayMetrics.density
-        return (dpValue * scale + 0.5f).toInt()
     }
 }

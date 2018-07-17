@@ -54,11 +54,22 @@ fun AppCompatActivity.getScreenHeightOverStatusBar(): Int {
     return point.y
 }
 
+fun Resources.dp2px(dpValue: Float): Int {
+    val scale = displayMetrics.density
+    return (dpValue * scale + 0.5f).toInt()
+}
+
 /**
  * 垃圾jitpack，居然找不到我的扩展函数，逼着我写Utils
  */
 class UtilsExtension {
     companion object {
+
+        fun dp2px(resources: Resources,dpValue: Float): Int {
+            val scale = resources.displayMetrics.density
+            return (dpValue * scale + 0.5f).toInt()
+        }
+
         /**
          * 在view显示之前读取宽高的扩展方法
          */

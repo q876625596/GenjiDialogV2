@@ -3,12 +3,12 @@ package com.ly.genjidialog.extensions
 import android.content.DialogInterface
 import android.view.KeyEvent
 import android.view.View
-import com.ly.genjidialog.other.DialogOptions
-import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.GenjiDialog
-import com.ly.genjidialog.other.ViewHolder
+import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
+import com.ly.genjidialog.other.DialogOptions
+import com.ly.genjidialog.other.ViewHolder
 
 /**
  * 创建一个dialog
@@ -64,3 +64,17 @@ inline fun DialogOptions.onKeyListenerFun(crossinline listener: (dialog: DialogI
     }
     onKeyListener = onKey
 }
+
+/**
+ * 针对特殊动画需要调用genjidialog.dismiss()的方法
+ */
+inline fun GenjiDialog.onKeyListenerFun(crossinline listener: (genjidialog: GenjiDialog, dialogInterFace: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean):GenjiDialog {
+    val onKey = object : OnKeyListener() {
+        override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
+            return listener.invoke(this@onKeyListenerFun, dialog, keyCode, event)
+        }
+    }
+    dialogOptions.onKeyListener = onKey
+    return this
+}
+
