@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
         //********************activity_loading的dialog代码
         showLoading.setOnClickListener {
-            val aaa = newGenjiDialog {
+            /*val aaa = newGenjiDialog {
                 //设置布局
                 layoutId = R.layout.slide_test
                 //设置宽度
@@ -175,18 +175,18 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 //添加show/dismiss时的监听事件
-                /*addShowDismissListener("eventKey") {
+                *//*addShowDismissListener("eventKey") {
                     onDialogShow {
                         Toast.makeText(this@MainActivity, "show", Toast.LENGTH_SHORT).show()
                     }
                     onDialogDismiss {
                         Toast.makeText(this@MainActivity, "dismiss", Toast.LENGTH_SHORT).show()
                     }
-                }*/
+                }*//*
                 //监听按键
-                /*onKeyListenerFun { dialog, keyCode, event ->
+                *//*onKeyListenerFun { dialog, keyCode, event ->
                     return@onKeyListenerFun false
-                }*/
+                }*//*
                 //阴影透明度
                 dimAmount = 0f
                 //动画
@@ -214,7 +214,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 return@onKeyListenerFun false
-            }.showOnWindow(supportFragmentManager)
+            }.showOnWindow(supportFragmentManager)*/
+            AAA().showOnWindow(supportFragmentManager)
         }
     }
 }
