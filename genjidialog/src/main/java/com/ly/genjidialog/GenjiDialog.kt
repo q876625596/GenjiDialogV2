@@ -35,7 +35,7 @@ open class GenjiDialog : DialogFragment() {
     /**
      * dialog配置
      */
-    var dialogOptions: DialogOptions = DialogOptions()
+   open var dialogOptions: DialogOptions = DialogOptions()
 
     /**
      * 执行顺序：3
@@ -54,11 +54,6 @@ open class GenjiDialog : DialogFragment() {
      * 执行顺序：4
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //如果是继承了GenjiDialog，那么就会重写extendsOptions()方法
-        //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions.LayoutId
-        extendsOptions()?.let {
-            dialogOptions.layoutId = it.layoutId
-        }
         //加载布局
         val view = inflater.inflate(dialogOptions.layoutId, container, false)
         unDisplayViewSize(view)
@@ -93,18 +88,8 @@ open class GenjiDialog : DialogFragment() {
      */
     override fun onStart() {
         super.onStart()
-        extendsOptions()?.let {
-            dialogOptions = it
-        }
         //初始化配置
         initParams()
-    }
-
-    /**
-     * 当继承GenjiDialog时，需要重写该方法，详见AAA
-     */
-    open fun extendsOptions(): DialogOptions? {
-        return null
     }
 
     /**
