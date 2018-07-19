@@ -55,12 +55,9 @@ open class GenjiDialog : DialogFragment() {
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //如果是继承了GenjiDialog，那么就会重写extendsOptions()方法
-        //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions
-        //dialog.window.exitTransition = Slide(Gravity.TOP)
-        //this.enterTransition = Slide(Gravity.TOP)
-        dialog.requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions.LayoutId
         extendsOptions()?.let {
-            dialogOptions = it
+            dialogOptions.layoutId = it.layoutId
         }
         //加载布局
         val view = inflater.inflate(dialogOptions.layoutId, container, false)
@@ -96,6 +93,9 @@ open class GenjiDialog : DialogFragment() {
      */
     override fun onStart() {
         super.onStart()
+        extendsOptions()?.let {
+            dialogOptions = it
+        }
         //初始化配置
         initParams()
     }
