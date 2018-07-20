@@ -254,6 +254,9 @@ open class GenjiDialog : DialogFragment() {
             }
             //设置dialog进入时内部view的动画
             dialogOptions.enterAnimator?.start()
+            dialogOptions.animStyle?.let {
+                window.setWindowAnimations(it)
+            }
         }
         //设置是否点击外部不消失
         isCancelable = dialogOptions.outCancel
@@ -262,7 +265,6 @@ open class GenjiDialog : DialogFragment() {
         //设置按键拦截事件，一般在全屏显示需要重写返回键时用到
         setOnKeyListener()
     }
-
 
 
     /**

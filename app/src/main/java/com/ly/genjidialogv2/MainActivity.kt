@@ -215,7 +215,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 return@onKeyListenerFun false
             }.showOnWindow(supportFragmentManager)*/
-            AAA().showOnWindow(supportFragmentManager)
+            //AAA().showOnWindow(supportFragmentManager)
+            newGenjiDialog {
+                animStyle = R.style.BottomTransAlphaADAnimation
+            }.showOnWindow(supportFragmentManager)
         }
     }
 }
