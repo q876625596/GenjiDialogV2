@@ -15,9 +15,10 @@ import com.ly.genjidialog.extensions.addAnimatorListenerEx
 import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
+import com.trello.rxlifecycle2.components.support.RxDialogFragment
 import java.util.concurrent.atomic.AtomicBoolean
 
-open class GenjiDialog : DialogFragment() {
+open class GenjiDialog : RxDialogFragment() {
 
     //activity
     private lateinit var mActivity: AppCompatActivity
