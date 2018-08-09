@@ -16,20 +16,24 @@ class AnimatorListenerEx : Animator.AnimatorListener {
     private var animatorRepeat: ((animator: Animator?) -> Unit)? = null
     private var animatorCancel: ((animator: Animator?) -> Unit)? = null
 
-    fun onAnimatorStart(listener: (animator: Animator?) -> Unit) {
+    fun onAnimatorStart(listener: (animator: Animator?) -> Unit): AnimatorListenerEx {
         animatorStart = listener
-}
+        return this
+    }
 
-    fun onAnimatorEnd(listener: (animator: Animator?) -> Unit) {
+    fun onAnimatorEnd(listener: (animator: Animator?) -> Unit): AnimatorListenerEx {
         animatorEnd = listener
+        return this
     }
 
-    fun onAnimatorRepeat(listener: (animator: Animator?) -> Unit) {
+    fun onAnimatorRepeat(listener: (animator: Animator?) -> Unit): AnimatorListenerEx {
         animatorRepeat = listener
+        return this
     }
 
-    fun onAnimatorCancel(listener: (animator: Animator?) -> Unit) {
+    fun onAnimatorCancel(listener: (animator: Animator?) -> Unit): AnimatorListenerEx {
         animatorCancel = listener
+        return this
     }
 
     override fun onAnimationRepeat(p0: Animator?) {

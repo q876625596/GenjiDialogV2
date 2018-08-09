@@ -18,25 +18,16 @@ import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
 
-class DialogOptions() : Parcelable {
+open class DialogOptions() : Parcelable {
 
-    var canClick = true
+    /*****************布局样式*******************/
+
     /**
-     * 特殊需求的自定义进出动画
+     * 布局
      */
-    var enterAnimator: Animator? = null
-    var exitAnimator: Animator? = null
+    @LayoutRes
+    open var layoutId = R.layout.loading_layout
 
-    var setEnterAnimatorFun: ((contentView:View) -> Animator)? = null
-    var setExitAnimatorFun: ((contentView:View) -> Animator)? = null
-
-    fun setOnEnterAnimator(listener: (contentView:View) -> Animator) {
-        setEnterAnimatorFun = listener
-    }
-
-    fun setOnExitAnimator(listener: (contentView:View) -> Animator) {
-        setExitAnimatorFun = listener
-    }
 
     /**
      *  dialog样式
@@ -58,27 +49,40 @@ class DialogOptions() : Parcelable {
         }
     }
 
+    /*****************动画相关*******************/
+
     /**
-     * 补间动画的style
+     * dialog进出的animation动画
+     * 此动画为普通动画，
      */
     @StyleRes
     var animStyle: Int? = 0
 
-    /**
-     * 带遮罩的滑出
-     */
-    var slideGravity: Int? = null
+    /*是否可以触发取消，比如在动画开始时将此属性设置false，防止在动画进行时，被再次触发动画*/
+    var canClick = true
 
     /**
-     * 布局
+     * dialog进出的自定义animator动画
      */
-    @LayoutRes
-    var layoutId = R.layout.loading_layout
+    var enterAnimator: Animator? = null
+    var exitAnimator: Animator? = null
+
+    var setEnterAnimatorFun: ((contentView: View) -> Animator)? = null
+    var setExitAnimatorFun: ((contentView: View) -> Animator)? = null
+
+    fun setOnEnterAnimator(listener: (contentView: View) -> Animator) {
+        setEnterAnimatorFun = listener
+    }
+
+    fun setOnExitAnimator(listener: (contentView: View) -> Animator) {
+        setExitAnimatorFun = listener
+    }
+
 
     /**
      * dialog的statusBarColor
-     * 如果Activity使用沉浸式状态栏并且预留了statusBar，
-     * 那么dialog在顶部显示的时候就自带了一个statusBar，此时就需要设置dialog的statusBarColor
+     * 如果Activity使用沉浸式状态栏
+     * 此时就需要设置dialog的statusBarColor
      * 默认透明
      * */
     var dialogStatusBarColor = Color.TRANSPARENT
@@ -107,7 +111,7 @@ class DialogOptions() : Parcelable {
     var isFullVertical = false
 
     /**
-     * 该纵向占满全屏不会扣掉状态栏高度
+     * 该纵向占满全屏不会扣掉状态栏高度,是真正的全屏
      */
     var isFullVerticalOverStatusBar = false
 
@@ -226,6 +230,9 @@ class DialogOptions() : Parcelable {
     /**
      * dialog顶部导航栏设置
      * 主要用于设置在statusBar的影响下，dialog显示时y轴错位的情况
+     * 当activity是沉浸式状态栏时（无论是否预留statusBar的高度）：dialog的是可占满全屏的
+     * 当activity非沉浸式状态栏时：dialog是不可占满全屏的
+     * 该方法对象可重写
      */
     var setStatusBarModeFun: (genjiDialog: GenjiDialog) -> Unit = { genjiDialog ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0 全透明实现

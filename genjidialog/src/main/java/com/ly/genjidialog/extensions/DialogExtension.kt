@@ -2,7 +2,6 @@ package com.ly.genjidialog.extensions
 
 import android.content.DialogInterface
 import android.view.KeyEvent
-import android.view.View
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
@@ -16,7 +15,7 @@ import com.ly.genjidialog.other.ViewHolder
  */
 inline fun newGenjiDialog(options: DialogOptions.(dialog: GenjiDialog) -> Unit): GenjiDialog {
     val genjiDialog = GenjiDialog()
-    genjiDialog.dialogOptions.options(genjiDialog)
+    genjiDialog.getDialogOptions().options(genjiDialog)
     return genjiDialog
 }
 
@@ -27,17 +26,17 @@ inline fun newGenjiDialog(options: DialogOptions.(dialog: GenjiDialog) -> Unit):
 inline fun GenjiDialog.dialogOptionsFun(dialogOp: DialogOptions.() -> Unit): DialogOptions {
     val options = DialogOptions()
     options.dialogOp()
-    dialogOptions = options
+    setDialogOptions(options)
     return options
 }
 
 /**
  * 设置convertListener的扩展方法
  */
-inline fun DialogOptions.convertListenerFun(crossinline listener: (view: View, holder: ViewHolder, dialog: GenjiDialog) -> Unit) {
+inline fun DialogOptions.convertListenerFun(crossinline listener: (holder: ViewHolder, dialog: GenjiDialog) -> Unit) {
     val viewConvertListener = object : ViewConvertListener() {
         override fun convertView(holder: ViewHolder, dialog: GenjiDialog) {
-            listener.invoke(holder.rootView, holder, dialog)
+            listener.invoke(holder, dialog)
         }
     }
     convertListener = viewConvertListener
@@ -56,7 +55,7 @@ inline fun DialogOptions.addShowDismissListener(key: String, dialogInterface: Di
 /**
  * 设置OnKeyListener的扩展方法
  */
-inline fun DialogOptions.onKeyListenerFun(crossinline listener: (dialog: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean) {
+inline fun DialogOptions.onKeyListenerForOptions(crossinline listener: (dialog: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean) {
     val onKey = object : OnKeyListener() {
         override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
             return listener.invoke(dialog, keyCode, event)
@@ -68,13 +67,13 @@ inline fun DialogOptions.onKeyListenerFun(crossinline listener: (dialog: DialogI
 /**
  * 针对特殊动画需要调用genjidialog.dismiss()的方法
  */
-inline fun GenjiDialog.onKeyListenerFun(crossinline listener: (genjidialog: GenjiDialog, dialogInterFace: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean):GenjiDialog {
+inline fun GenjiDialog.onKeyListenerForDialog(crossinline listener: (genjidialog: GenjiDialog, dialogInterFace: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean): GenjiDialog {
     val onKey = object : OnKeyListener() {
         override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
-            return listener.invoke(this@onKeyListenerFun, dialog, keyCode, event)
+            return listener.invoke(this@onKeyListenerForDialog, dialog, keyCode, event)
         }
     }
-    dialogOptions.onKeyListener = onKey
+    getDialogOptions().onKeyListener = onKey
     return this
 }
 

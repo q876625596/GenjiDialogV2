@@ -1,27 +1,43 @@
 package com.ly.genjidialog
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.StyleRes
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOverStatusBar
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenWidth
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.unDisplayViewSize
-import com.ly.genjidialog.extensions.addAnimatorListenerEx
+import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
 import com.trello.rxlifecycle2.components.support.RxDialogFragment
 import java.util.concurrent.atomic.AtomicBoolean
 
+/*为了方便查看，我将每一个方法和其所需的对应属性放在一起*/
 open class GenjiDialog : RxDialogFragment() {
 
-    //activity
+    /*绑定的activity*/
     private lateinit var mActivity: AppCompatActivity
+
+    fun getMyActivity(): AppCompatActivity {
+        return mActivity
+    }
+
+    /**
+     * 执行顺序：2
+     * 绑定activity，不建议使用fragment里面自带的getActivity()
+     */
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity = context as AppCompatActivity
+    }
+
 
     /**
      * 是否已经dismiss，避免主动调用dismiss的时候与onStop中触发两次相同事件
@@ -34,18 +50,32 @@ open class GenjiDialog : RxDialogFragment() {
     private val options = "options"
 
     /**
-     * dialog配置
+     * dialog配置,所有配置都写在里面
      */
-    var dialogOptions: DialogOptions = DialogOptions()
+    private var dialogOptions: DialogOptions = DialogOptions()
+
+    fun setDialogOptions(dialogOptions: DialogOptions): GenjiDialog {
+        this.dialogOptions = dialogOptions
+        return this
+    }
+
+    fun getDialogOptions(): DialogOptions {
+        return dialogOptions
+    }
 
     /**
      * 执行顺序：3
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //如果是继承了GenjiDialog，那么就会重写extendsOptions()方法
+        //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions
+        extendsOptions()?.let {
+            dialogOptions = it
+        }
         //设置dialog样式
         setStyle(dialogOptions.dialogStyle, dialogOptions.dialogThemeFun.invoke(this))
-        //恢复保存的数据
+        //恢复保存的配置
         if (savedInstanceState != null) {
             dialogOptions = savedInstanceState.getParcelable(options)
         }
@@ -55,17 +85,9 @@ open class GenjiDialog : RxDialogFragment() {
      * 执行顺序：4
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //如果是继承了GenjiDialog，那么就会重写extendsOptions()方法
-        //所以先检查是否重写该方法，如果重写了，就使用该方法返回的dialogOptions
-        //dialog.window.exitTransition = Slide(Gravity.TOP)
-        //this.enterTransition = Slide(Gravity.TOP)
-        dialog.requestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        extendsOptions()?.let {
-            dialogOptions = it
-        }
         //加载布局
         val view = inflater.inflate(dialogOptions.layoutId, container, false)
-        unDisplayViewSize(view)
+        //unDisplayViewSize(view)
         convertView(ViewHolder(view), this)
         return view
     }
@@ -74,22 +96,7 @@ open class GenjiDialog : RxDialogFragment() {
      * 数据绑定到视图/视图控件监听等
      */
     private fun convertView(holder: ViewHolder, dialog: GenjiDialog) {
-        if (dialogOptions.convertListener != null) {
-            dialogOptions.convertListener!!.convertView(holder, dialog)
-        }
-    }
-
-    /**
-     * 执行顺序：2
-     * 绑定activity，不建议使用fragment里面自带的getActivity()
-     */
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mActivity = context as AppCompatActivity
-    }
-
-    fun getMyActivity(): AppCompatActivity {
-        return mActivity
+        dialogOptions.convertListener?.convertView(holder, dialog)
     }
 
     /**
@@ -120,10 +127,11 @@ open class GenjiDialog : RxDialogFragment() {
     }
 
     /**
-     * 主动dismiss时会在onStop前调用
+     * 主动dismiss时会在onStop前调用（当采用特殊的view动画时，需要主动调用dismiss，才能生效退出动画）
      */
     override fun dismiss() {
         dialogOptions.exitAnimator.apply {
+            //如果没自定义的view动画，那么直接执行
             if (this == null) {
                 //如果没有执行过监听操作才执行，并且把监听设为已执行状态
                 if (dismissed.compareAndSet(false, true)) {
@@ -131,17 +139,8 @@ open class GenjiDialog : RxDialogFragment() {
                     super.dismiss()
 
                 }
-            } else {
-                //添加监听，在动画结束时调用真正的dismiss
-                this.addAnimatorListenerEx {
-                    onAnimatorEnd {
-                        if (dismissed.compareAndSet(false, true)) {
-                            executeDismissListener()
-                            super.dismiss()
-
-                        }
-                    }
-                }
+            } else {//如果有动画
+                //直接执行动画，该动画已经设置过监听，将会在结束动画时调用super.dismiss()方法
                 this.start()
             }
         }
@@ -184,21 +183,55 @@ open class GenjiDialog : RxDialogFragment() {
         }
     }
 
+    /*进入动画的listener*/
+    private lateinit var animatorEnterListener: AnimatorListenerEx
+    /*退出动画的listener*/
+    private lateinit var animatorExitListener: AnimatorListenerEx
+
+    /*初始化进入动画的listener*/
+    private fun initAnimatorEnterListener(): AnimatorListenerEx {
+        animatorEnterListener = AnimatorListenerEx().onAnimatorStart {
+            dialogOptions.canClick = false
+        }.onAnimatorEnd {
+            dialogOptions.canClick = true
+        }
+        return animatorEnterListener
+    }
+
+    /*初始化退出动画的listener*/
+    private fun initAnimatorExitListener(): AnimatorListenerEx {
+        animatorExitListener = AnimatorListenerEx().onAnimatorStart {
+            dialogOptions.canClick = false
+        }.onAnimatorEnd {
+            //退出动画结束时调用super.dismiss()
+            if (dismissed.compareAndSet(false, true)) {
+                executeDismissListener()
+                super.dismiss()
+            }
+            dialogOptions.canClick = true
+        }
+        return animatorExitListener
+    }
+
     /**
      * 初始化配置
      */
     private fun initParams() {
         //设置dialog的初始化数据
         dialog.window?.let { window ->
-            //dialog显示对布局中view的自定义动画
+            //设置dialog显示时，布局中view的自定义动画
             dialogOptions.setEnterAnimatorFun?.invoke(window.decorView.findViewById(android.R.id.content))?.let {
+                it.addListener(initAnimatorEnterListener())
                 dialogOptions.enterAnimator = it
             }
-            //dialog隐藏对布局中view的自定义动画
+            //设置dialog隐藏时，布局中view的自定义动画
             dialogOptions.setExitAnimatorFun?.invoke(window.decorView.findViewById(android.R.id.content))?.let {
+                it.addListener(initAnimatorExitListener())
                 dialogOptions.exitAnimator = it
             }
+            //设置dialog的statusBarColor
             window.statusBarColor = dialogOptions.dialogStatusBarColor
+            //设置dialog的statusBar的显示模式
             dialogOptions.setStatusBarModeFun.invoke(this)
             //设置属性
             window.attributes = window.attributes?.apply {
@@ -253,11 +286,14 @@ open class GenjiDialog : RxDialogFragment() {
                     y = dialogOptions.dialogViewY
                 }
             }
-            //设置dialog进入时内部view的动画
+            //设置dialog进入时内部view的动画,如果animator动画不为空，那么执行animator动画
             dialogOptions.enterAnimator?.start()
-            dialogOptions.animStyle?.let {
-                window.setWindowAnimations(it)
-            }
+            //否则执行animation动画
+                    ?: apply {
+                        dialogOptions.animStyle?.let {
+                            window.setWindowAnimations(it)
+                        }
+                    }
         }
         //设置是否点击外部不消失
         isCancelable = dialogOptions.outCancel
@@ -279,11 +315,66 @@ open class GenjiDialog : RxDialogFragment() {
             return
         }*/
         //boolean b = getFragmentManager().executePendingTransactions();
-        dialog.setOnKeyListener(dialogOptions.onKeyListener)
+
+        //如果设置过特殊的动画，并且没有设置返回建的监听，那么默认设置一个返回键的监听
+        if (dialogOptions.exitAnimator != null && dialogOptions.onKeyListener == null) {
+            val onKey = object : OnKeyListener() {
+                override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        return if (getDialogOptions().canClick) {
+                            dismiss()
+                            true
+                        } else {
+                            true
+                        }
+                    }
+                    return false
+                }
+            }
+            dialog.setOnKeyListener(onKey)
+        } else {//如果不是特殊动画，或者用户自定义了OnKeyListener，那么直接将onKeyListener设置
+            dialogOptions.onKeyListener?.apply {
+                dialog.setOnKeyListener(this)
+            }
+        }
+    }
+
+    /**
+     * 该方法是为java准备的一个参数的showOnWindow方法
+     * @param manager
+     */
+    fun showOnWindow(manager: FragmentManager): GenjiDialog {
+        executeShowListener()
+        dialogOptions.apply {
+            this.gravity = dialogOptions.gravity
+            this.animStyle = dialogOptions.animStyle
+            removeAsView()
+            loadAnim()
+        }
+        super.show(manager, System.currentTimeMillis().toString())
+        return this
+    }
+
+    /**
+     * 该方法是为java准备的两个参数的showOnWindow方法
+     * @param manager
+     * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
+     */
+    fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity): GenjiDialog {
+        executeShowListener()
+        dialogOptions.apply {
+            this.gravity = gravity
+            this.animStyle = dialogOptions.animStyle
+            removeAsView()
+            loadAnim()
+        }
+        super.show(manager, System.currentTimeMillis().toString())
+        return this
     }
 
     /**
      * show方法的执行顺序 ：1
+     * 该方法java中为三参，kotlin为通用
      * @param manager
      * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
      * @param newAnim 新的动画(默认为上一次设置的动画)
@@ -301,6 +392,7 @@ open class GenjiDialog : RxDialogFragment() {
     }
 
     /**
+     * 该方法java中为四参，kotlin为通用
      * @param manager
      * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
      * @param newAnim 新的动画(默认为上一次设置的动画)
@@ -334,6 +426,48 @@ open class GenjiDialog : RxDialogFragment() {
             loadAnim()
         }
         super.showNow(manager, tag)
+        return this
+    }
+
+    /**
+     * 将dialog显示在view附近
+     * 该方法是为java准备的两个参数的showOnView方法
+     * @param manager
+     * @param view 被依赖的view
+     */
+    fun showOnView(manager: FragmentManager, view: View): GenjiDialog {
+        executeShowListener()
+        dialogOptions.dialogAsView(view, dialogOptions.gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
+        super.show(manager, System.currentTimeMillis().toString())
+        return this
+    }
+
+    /**
+     * 将dialog显示在view附近
+     * 该方法是为java准备的三个参数的showOnView方法
+     * @param manager
+     * @param view 被依赖的view
+     * @param gravityAsView 相对于该view的位置(默认为上一次设置的位置)
+     */
+    fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView): GenjiDialog {
+        executeShowListener()
+        dialogOptions.dialogAsView(view, gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
+        super.show(manager, System.currentTimeMillis().toString())
+        return this
+    }
+
+    /**
+     * 将dialog显示在view附近
+     * 该方法是为java准备的前四个参数的showOnView方法
+     * @param manager
+     * @param view 被依赖的view
+     * @param gravityAsView 相对于该view的位置(默认为上一次设置的位置)
+     * @param newAnim 新的动画(默认为上一次的动画效果)
+     */
+    fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle): GenjiDialog {
+        executeShowListener()
+        dialogOptions.dialogAsView(view, gravityAsView, newAnim, dialogOptions.offsetX, dialogOptions.offsetY)
+        super.show(manager, System.currentTimeMillis().toString())
         return this
     }
 
