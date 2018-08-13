@@ -14,6 +14,18 @@ class DialogOnViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        /* if (Build.VERSION.SDK_INT >= 21) {
+                   val decorView = window.decorView
+                   val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                   window.statusBarColor = Color.TRANSPARENT
+                   decorView.systemUiVisibility = option
+                   (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows = true
+                   //getWindow().setNavigationBarColor(Color.TRANSPARENT);
+               } else if (Build.VERSION.SDK_INT >= 19) {
+                   (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows = false
+                   window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+               }*/
+        //window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         /*******************普通动画示例 activity_main布局********************/
         val genji = newGenjiDialog {

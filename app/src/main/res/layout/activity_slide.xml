@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#666666">
+
+    <Button
+        android:id="@+id/slideForBottom"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:background="#ffffff"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="下方滑出"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/slideForTop"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:background="#ffffff"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="上方滑出"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/slideForRight"
+        android:layout_width="48dp"
+        android:layout_height="100dp"
+        android:background="#ffffff"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="右\n边\n滑\n出"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/slideForLeft"
+        android:layout_width="48dp"
+        android:layout_height="100dp"
+        android:background="#ffffff"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="左\n边\n滑\n出"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
