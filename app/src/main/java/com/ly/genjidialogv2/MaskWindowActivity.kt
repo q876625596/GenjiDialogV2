@@ -14,12 +14,10 @@ import com.ly.genjidialog.extensions.*
 import kotlinx.android.synthetic.main.activity_loading.*
 
 
-class MainActivity : AppCompatActivity() {
+class MaskWindowActivity : AppCompatActivity() {
 
-    var clickTime = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
         setContentView(R.layout.activity_loading)
 
         /* if (Build.VERSION.SDK_INT >= 21) {
@@ -34,73 +32,6 @@ class MainActivity : AppCompatActivity() {
              window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
          }*/
         //window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-
-
-        /*******************普通动画示例 activity_main布局********************/
-        /*   val genji = newGenjiDialog {
-               layoutId = R.layout.aaa
-               width = 329
-               height = 252
-               convertListenerFun { holder, dialog ->
-
-               }
-               addShowDismissListener("aaa") {
-                   onDialogShow {
-
-                   }
-                   onDialogDismiss {
-
-                   }
-               }
-               onKeyListenerForOptions { dialog, keyCode, event ->
-                   return@onKeyListenerForOptions false
-               }
-           }.showOnWindow(supportFragmentManager)
-
-           ltBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.LEFT_TOP, R.style.LeftTransAlphaADAnimation)
-           }
-           ctBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.CENTER_TOP, R.style.TopTransAlphaADAnimation)
-           }
-           rtBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.RIGHT_TOP, R.style.RightTransAlphaADAnimation)
-           }
-           lcBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.LEFT_CENTER, R.style.LeftTransAlphaADAnimation)
-           }
-           ccBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.CENTER_CENTER, R.style.AlphaEnterExitAnimation)
-           }
-           rcBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.RIGHT_CENTER, R.style.RightTransAlphaADAnimation)
-           }
-           lbBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.LEFT_BOTTOM, R.style.LeftTransAlphaADAnimation)
-           }
-           cbBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.CENTER_BOTTOM, R.style.BottomTransAlphaADAnimation)
-           }
-           rbBtn.setOnClickListener {
-               genji.showOnWindow(supportFragmentManager, DialogGravity.RIGHT_BOTTOM, R.style.RightTransAlphaADAnimation)
-           }
-           needHealing.setOnClickListener {
-               if (clickTime == 9) {
-                   clickTime = 0
-               }
-               when (clickTime) {
-                   0 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.LEFT_TOP, R.style.ScaleOverShootEnterExitAnimationX100Y100)
-                   1 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.CENTER_TOP, R.style.ScaleOverShootEnterExitAnimationX50Y100)
-                   2 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.RIGHT_TOP, R.style.ScaleOverShootEnterExitAnimationX0Y100)
-                   3 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.LEFT_CENTER, R.style.ScaleOverShootEnterExitAnimationX100Y50)
-                   4 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.CENTER_CENTER, R.style.ScaleOverShootEnterExitAnimationX50Y50)
-                   5 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.RIGHT_CENTER, R.style.ScaleOverShootEnterExitAnimationX0Y50)
-                   6 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.LEFT_BOTTOM, R.style.ScaleOverShootEnterExitAnimationX100Y0)
-                   7 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.CENTER_BOTTOM, R.style.ScaleOverShootEnterExitAnimationX50Y0)
-                   8 -> genji.showOnView(supportFragmentManager, needHealing, DialogGravity.RIGHT_BOTTOM, R.style.ScaleOverShootEnterExitAnimationX0Y0)
-               }
-               clickTime++
-           }*/
 
         /**********特殊动画的示例  activity_loading布局*************/
         showLoading.setOnClickListener {
@@ -165,10 +96,10 @@ class MainActivity : AppCompatActivity() {
                 //添加show/dismiss时的监听事件
                 addShowDismissListener("eventKey") {
                     onDialogShow {
-                        Toast.makeText(this@MainActivity, "show", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MaskWindowActivity, "show", Toast.LENGTH_SHORT).show()
                     }
                     onDialogDismiss {
-                        Toast.makeText(this@MainActivity, "dismiss", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MaskWindowActivity, "dismiss", Toast.LENGTH_SHORT).show()
                     }
                 }
                 //监听按键
