@@ -2,6 +2,7 @@ package com.ly.genjidialogv2
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
@@ -109,6 +110,7 @@ class MainActivity : AppCompatActivity() {
                 //设置宽度
                 //width = dp2px(100f)
                 //设置高度
+                isLazy = true
                 //height = dp2px(100f)
                 isFullHorizontal = true
                 isFullVerticalOverStatusBar = true
@@ -125,6 +127,7 @@ class MainActivity : AppCompatActivity() {
                             dialog.dismiss()
                         }
                     }
+                    holder.setBackgroundColor(R.id.realView, Color.GREEN)
                 }
                 setOnEnterAnimator { rootView ->
                     //在此处设置进入动画
@@ -175,7 +178,8 @@ class MainActivity : AppCompatActivity() {
                 //阴影透明度
                 dimAmount = 0f
                 //动画
-                animStyle = null
+                //animStyle = null
+                duration = 1000L
                 //相对view的偏移
                 //offsetX = -showLoading.width / 2
                 //offsetY = -showLoading.height / 2

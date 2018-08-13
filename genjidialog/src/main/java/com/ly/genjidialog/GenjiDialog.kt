@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.support.annotation.StyleRes
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.*
 import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOverStatusBar
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenWidth
-import com.ly.genjidialog.extensions.UtilsExtension.Companion.unDisplayViewSize
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogOptions
@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /*为了方便查看，我将每一个方法和其所需的对应属性放在一起*/
 open class GenjiDialog : RxDialogFragment() {
+
+    lateinit var rootView: View
 
     /*绑定的activity*/
     private lateinit var mActivity: AppCompatActivity
@@ -63,6 +65,11 @@ open class GenjiDialog : RxDialogFragment() {
         return dialogOptions
     }
 
+    /*懒加载，根据dialogOptions.duration来延迟加载实现懒加载（曲线救国）*/
+    private fun onLazy() {
+        convertView(ViewHolder(rootView), this)
+    }
+
     /**
      * 执行顺序：3
      */
@@ -86,10 +93,17 @@ open class GenjiDialog : RxDialogFragment() {
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //加载布局
-        val view = inflater.inflate(dialogOptions.layoutId, container, false)
+        rootView = inflater.inflate(dialogOptions.layoutId, container, false)
         //unDisplayViewSize(view)
-        convertView(ViewHolder(view), this)
-        return view
+        if (!dialogOptions.isLazy) {
+            convertView(ViewHolder(rootView), this)
+        } else {
+            //懒加载
+            rootView.postDelayed({
+                onLazy()
+            }, dialogOptions.duration)
+        }
+        return rootView
     }
 
     /**

@@ -67,6 +67,9 @@ open class DialogOptions() : Parcelable {
     var enterAnimator: Animator? = null
     var exitAnimator: Animator? = null
 
+    /*懒加载的延时(根据自己动画的时长来设置)*/
+    var duration: Long = 0L
+
     var setEnterAnimatorFun: ((contentView: View) -> Animator)? = null
     var setExitAnimatorFun: ((contentView: View) -> Animator)? = null
 
@@ -78,6 +81,8 @@ open class DialogOptions() : Parcelable {
         setExitAnimatorFun = listener
     }
 
+    /*是否是懒加载*/
+    var isLazy = false
 
     /**
      * dialog的statusBarColor
