@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /*为了方便查看，我将每一个方法和其所需的对应属性放在一起*/
 open class GenjiDialog : RxDialogFragment() {
 
+    /*根布局*/
     lateinit var rootView: View
 
     /*绑定的activity*/

@@ -1,12 +1,5 @@
 # GenjiDialog
 
-**<font size=5 color=#FF0000>
-红色加粗提醒，该库目前就我所知，所有的弹框需求都能实现，
-接下来就是优化代码和加一些新的功能，
-有些特殊的效果我在这里没有时间写出来（自定义animator曲线救国），
-有需要实现的效果或者不懂的可以提issues，
-我会去解答，预计在不久后会完善README，
-并且会发一篇来博客讲解(骗star :smirk:)</font>**
 
 [![](https://jitpack.io/v/q876625596/GenjiDialogV2.svg)](https://jitpack.io/#q876625596/GenjiDialogV2)
 
@@ -22,21 +15,25 @@
 
 ``` groovy
 allprojects {
-	repositories {
-		...
-		maven { url 'https://jitpack.io' }
-	}
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.0.9'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.1.0'
 }
 ```
 废话不多说，直接上图
 
-![图片大小4.27MB](image/need_healing_compress.GIF)
+![onWindow](image/show_on_window.gif)
+
+![onView](image/show_on_view.gif)
+
+![onView](image/show_mask_slide.gif)
 
 #### 内置大量基础动画，基本能满足基本需求
 
@@ -142,76 +139,125 @@ dialog.showOnWindow(supportFragmentManager,DialogGravity.RIGHT_TOP,R.style.Scale
 
 ##### 附加一个稍微特殊点的滑出方式（带遮罩）
 ``` kotlin
-newGenjiDialog {
-    width = dp2px(100f)
-    height = dp2px(100f)
-    slideGravity = Gravity.TOP
+newGenjiDialog { genjiDialog ->
+    //设置布局
+    layoutId = R.layout.slide_view_bottom
+    //isLazy = true
+    //设置横纵向占满
+    isFullHorizontal = true
+    isFullVerticalOverStatusBar = true
+    //阴影透明度
     dimAmount = 0f
-    animStyle = R.style.MaskAlphaADAnimation
-    gravityAsView = DialogGravity.CENTER_BOTTOM
-}.showOnView(supportFragmentManager,showLoading)
+    //处理事件/数据绑定
+    convertListenerFun { holder, dialog ->
+        //设置点击realView以外的部分就dismiss
+        holder.setOnClickListener(R.id.bottomTouchView) {
+            if (canClick) {
+                dialog.dismiss()
+            }
+        }.setOnClickListener(R.id.topTouchView) {
+            if (canClick) {
+                dialog.dismiss()
+            }
+        }
+    }
+    setOnEnterAnimator { rootView ->
+        //在此处设置进入动画
+        AnimatorSet().apply {
+            duration = 500L
+            val realView = rootView.findViewById<View>(R.id.realView)
+            val touchView = rootView.findViewById<View>(R.id.bottomTouchView)
+            val topTouchView = rootView.findViewById<View>(R.id.topTouchView)
+            val maskLayout = rootView.findViewById<View>(R.id.maskLayout)
+            //给realView的父布局(遮罩布局)设置距顶部margin
+            maskLayout?.apply {
+                layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
+                    topMargin = (slideForBottom.y + slideForBottom.height).toInt()
+                }
+            }
+            play(ObjectAnimator
+                    .ofFloat(realView, "y", -UtilsExtension.dp2px(resources, 200f).toFloat(), 0f))
+                    .with(ObjectAnimator
+                            .ofFloat(touchView, "alpha", 0f, 1f))
+                    .with(ObjectAnimator
+                            .ofFloat(topTouchView, "alpha", 0f, 1f))
+        }
+    }
+    setOnExitAnimator {
+        //退出动画
+        AnimatorSet().apply {
+            duration = 500L
+            val realView = it.findViewById<View>(R.id.realView)
+            val touchView = it.findViewById<View>(R.id.bottomTouchView)
+            val topTouchView = it.findViewById<View>(R.id.topTouchView)
+            play(ObjectAnimator
+                    .ofFloat(realView, "y", 0f, -UtilsExtension.dp2px(resources, 200f).toFloat()))
+                    .with(ObjectAnimator
+                            .ofFloat(touchView, "alpha", 1f, 0f))
+                    .with(ObjectAnimator
+                            .ofFloat(topTouchView, "alpha", 1f, 0f))
+        }
+    }
+}.showOnWindow(supportFragmentManager)
 ```
 
 效果图：
 
-![loading_center_bottom_as_view_slide](image/loading_center_bottom_as_view_slide.gif)
+![show_mask_slide_down](image/show_mask_slide_down.gif)
 
 
-#### 基本的显示模式都已经说了，接下来就放一个整体代码出来
-
-``` kotlin
-newGenjiDialog {
-    //设置布局
-    layoutId = R.layout.aaa
-    //设置宽度
-    width = dp2px(100f)
-    //设置高度
-    height = dp2px(100f)
-    //当时showOnWindow时设置显示位置
-    //gravity = DialogGravity.RIGHT_TOP
-    //处理事件/数据绑定
-    convertListenerFun { view, holder, dialog ->
-        view.image.setOnClickListener {
-            dialog.dismiss()
-        }
-    }
-    //添加show/dismiss时的监听事件
-    addShowDismissListener("eventKey") {
-        onDialogShow {
-            Toast.makeText(this@MainActivity, "show", Toast.LENGTH_SHORT).show()
-        }
-        onDialogDismiss {
-            Toast.makeText(this@MainActivity, "dismiss", Toast.LENGTH_SHORT).show()
-        }
-    }
-    //监听按键
-    onKeyListenerFun { dialog, keyCode, event ->
-        return@onKeyListenerFun false
-    }
-    //有遮罩的滑出位置
-    //slideGravity = Gravity.TOP
-    //阴影透明度
-    dimAmount = 0.3f
-    //动画
-    animStyle = R.style.ScaleOverShootEnterExitAnimationX0Y0
-    //相对view的偏移
-    offsetX = -showLoading.width / 2
-    offsetY = -showLoading.height / 2
-    //相对View的位置
-    gravityAsView = DialogGravity.RIGHT_BOTTOM
-    //showOnWindow的偏移
-    //verticalMargin = dp2px(100f).toFloat()
-    //horizontalMargin = dp2px(100f).toFloat()
-    //isFullHorizontal 是否横向占满
-    //isFullVertical 是否纵向占满 该纵向占满并非全屏，纵向占满会自动扣掉状态栏的高度
-    //isFullVerticalOverStatusBar 该纵向占满全屏不会扣掉状态栏高度
-    //touchCancel 是否点击屏幕区域取消（不包含返回按钮）
-    //outCancel 是否点击外部取消 需要和touchCancel = false 一起使用
-}.showOnView(supportFragmentManager, showLoading)
-```
+#### 基本的显示模式都已经说了，接下来就放一个整体可见的参数表格出来
 
 
-这里我给出了大部分属性/方法，以下部分不常用的可以到DialogOptions里面查看，注释很详细
+##### GenjiDialog中
+| 属性名/方法名 | 介绍 |
+| ------ | ------ |
+| rootView | layoutId所对应的布局 |
+| getMyActivity() | 获取该dialog所在的activity |
+| setDialogOptions(...) | 设置dialogOptions |
+| getDialogOptions() | 获取dialogOptions |
+| extendsOptions() | 当继承GenjiDialog时需要重写该方法，在该方法里面设置新的dialogOptions |
+| showOnWindow(...) | 将dialog显示在屏幕中，有多个重载方法，具体可见源码注释 |
+| showOnView(...) | 将dialog依附于某个View，有多个重载方法，具体可见源码注释 |
+
+##### DialogOptions
+| 属性名/方法名 | 介绍 |
+| ------ | ------ |
+| layoutId | 布局id，默认:R.layout.loading_layout |
+| dialogStyle | dialog的样式，一般情况下不用修改，为了方便某些朋友可能有特殊需求，所以放出来可供重写，默认：DialogFragment.STYLE_NO_TITLE |
+| dialogThemeFun | dialog的主题，同上，重写方法setDialogTheme(fun) |
+| setStatusBarModeFun | dialog的状态栏设置，同上，重写方法setStatusMode(fun) |
+| animStyle | dialog的进出动画，用于一般情况，内置了很多日常所需动画，可以到res/values/styles中查看，动画文件在res/anim中查看，默认根据gravity来判断 |
+| setOnEnterAnimator(fun) | dialog的进入动画，这个动画是用于一些特殊情况，比如上面的带遮罩的滑出动画，默认：null |
+| exitAnimator(fun) | dialog的退出动画，同上 （这两个动画的示例请看上面带遮罩滑出动画的代码，也可以去源码查看）|
+| canClick | 否可以触发取消，默认：true，比如在动画开始时将此属性设置false，防止在动画进行时，被再次触发动画，当使用上面两种自定义特殊动画时，我已经默认添加了改变这个状态值的监听 |
+| isLazy | 是否懒加载，默认：false，是否在动画完成时才执行convertListener |
+| duration | 懒加载的延时，默认：0L，配合isLazy使用，这个值一般设置为动画的时长，为了保证动画流畅 |
+| dialogStatusBarColor | dialog的statusBar颜色，默认：透明，一般来说无需改变 |
+| width | dialog宽度，默认：0px |
+| height | dialog高度，默认：0px |
+| isFullHorizontal | dialog是否横向占满，默认：false |
+| isFullVertical | dialog是否纵向占满，默认：false，该纵向占满并非全屏，纵向占满会自动扣掉状态栏的高度 |
+| isFullVerticalOverStatusBar | dialog是否纵向占满，默认：false，该纵向占满全屏不会扣掉状态栏高度,是真正的全屏 |
+| verticalMargin | dialog上下边距，默认：0，详细注释请在源码中查看 |
+| horizontalMargin | dialog左右边距，默认：0，详细注释请在源码中查看 |
+| fullVerticalMargin | dialog在上下占满时的边距，默认：0px |
+| fullHorizontalMargin | dialog在左右占满时的边距，默认：0px |
+| dimAmount | dialog背景的阴影的透明度：默认：0.3f |
+| gravity | dialog显示为showOnWindow()时的位置：默认：DialogGravity.CENTER_CENTER |
+| gravityAsView | dialog显示为showOnView()时的位置：默认：DialogGravity.CENTER_BOTTOM |
+| dialogViewX | x轴坐标值，用于特殊动画时定位dialog，默认：0px |
+| dialogViewY | y轴坐标值，用于特殊动画时定位dialog，默认：0px |
+| offsetX | 当dialog依附在view上时x轴的偏移量，默认：0px |
+| offsetX | 当dialog依附在view上时x轴的偏移量，默认：0px |
+| touchCancel | 是否点击屏幕区域取消（不包含返回按钮），默认：false |
+| outCancel | 是否点击外部取消，默认：false，当 touchCancel == true时此属性无效，必须是 touchCancel和该属性均为false时，那么点击屏幕区域和返回按钮都不能关闭dialog |
+| showDismissMap | 显示与消失的监听map |
+| onKeyListener | 按钮监听 |
+| convertListener | view初始化 |
+
+
+这里我给出的属性/方法，注释不详细可以到DialogOptions源码里面查看，那里面注释很详细
 
 #### 因为也是第一次写kotlin的库，可能有一些东西不算很完美，希望有能力强的大佬能够指出
 

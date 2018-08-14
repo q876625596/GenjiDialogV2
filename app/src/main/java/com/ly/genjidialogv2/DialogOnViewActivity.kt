@@ -2,18 +2,17 @@ package com.ly.genjidialogv2
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.ly.genjidialog.extensions.addShowDismissListener
+import android.widget.Toast
 import com.ly.genjidialog.extensions.convertListenerFun
 import com.ly.genjidialog.extensions.newGenjiDialog
-import com.ly.genjidialog.extensions.onKeyListenerForOptions
 import com.ly.genjidialog.other.DialogGravity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_on_view.*
 
 class DialogOnViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_on_view)
         /* if (Build.VERSION.SDK_INT >= 21) {
                    val decorView = window.decorView
                    val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -27,26 +26,17 @@ class DialogOnViewActivity : AppCompatActivity() {
                }*/
         //window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
-        /*******************普通动画示例 activity_main布局********************/
-        val genji = newGenjiDialog {
+        /*******************依附于view显示dialog********************/
+        val genji = newGenjiDialog { genjiDialog ->
             layoutId = R.layout.aaa
             width = 329
             height = 252
             convertListenerFun { holder, dialog ->
-
-            }
-            addShowDismissListener("aaa") {
-                onDialogShow {
-
-                }
-                onDialogDismiss {
-
+                holder.setOnClickListener(R.id.image) {
+                    Toast.makeText(this@DialogOnViewActivity, "I need healing", Toast.LENGTH_SHORT).show()
                 }
             }
-            onKeyListenerForOptions { dialog, keyCode, event ->
-                return@onKeyListenerForOptions false
-            }
-        }.showOnWindow(supportFragmentManager)
+        }
 
         ltBtn.setOnClickListener {
             genji.showOnView(supportFragmentManager, needHealing, DialogGravity.LEFT_TOP, R.style.ScaleOverShootEnterExitAnimationX100Y100)

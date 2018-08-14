@@ -18,9 +18,9 @@ class SlideWindowActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slide)
 
-        /**********特殊动画的示例 *************/
-        slideForBottom.setOnClickListener {
-            newGenjiDialog {
+        /**********带遮罩的滑出动画的dialog *************/
+        slideForBottom.setOnClickListener { view ->
+            newGenjiDialog { genjiDialog ->
                 //设置布局
                 layoutId = R.layout.slide_view_bottom
                 //isLazy = true
@@ -81,8 +81,8 @@ class SlideWindowActivity : AppCompatActivity() {
                 }
             }.showOnWindow(supportFragmentManager)
         }
-        slideForTop.setOnClickListener {
-            newGenjiDialog {
+        slideForTop.setOnClickListener { view ->
+            newGenjiDialog { genjiDialog ->
                 //设置布局
                 layoutId = R.layout.slide_view_top
                 //isLazy = true
@@ -116,7 +116,7 @@ class SlideWindowActivity : AppCompatActivity() {
                         //给realView的父布局(遮罩布局)设置距顶部margin
                         maskLayout?.apply {
                             layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
-                                bottomMargin = UtilsExtension.getScreenHeight(resources) - slideForTop.y.toInt()
+                                bottomMargin = UtilsExtension.getScreenHeightOverStatusBar(this@SlideWindowActivity) - slideForTop.y.toInt()
                                 //可以把maskLayout的宽设置为对应View的宽度
                                 width = slideForTop.width
                             }
@@ -148,8 +148,8 @@ class SlideWindowActivity : AppCompatActivity() {
                 }
             }.showOnWindow(supportFragmentManager)
         }
-        slideForRight.setOnClickListener {
-            newGenjiDialog {
+        slideForRight.setOnClickListener { view ->
+            newGenjiDialog { genjiDialog ->
                 //设置布局
                 layoutId = R.layout.slide_view_right
                 //isLazy = true
@@ -206,8 +206,8 @@ class SlideWindowActivity : AppCompatActivity() {
             }.showOnWindow(supportFragmentManager)
         }
 
-        slideForLeft.setOnClickListener {
-            newGenjiDialog {
+        slideForLeft.setOnClickListener { view ->
+            newGenjiDialog { genjiDialog ->
                 //设置布局
                 layoutId = R.layout.slide_view_left
                 //isLazy = true

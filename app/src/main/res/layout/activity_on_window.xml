@@ -54,9 +54,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="正中心"
-        app:layout_constraintBottom_toTopOf="@id/cbBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/rbBtn"
@@ -84,27 +85,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/i_need_healing"
-        app:layout_constraintBottom_toTopOf="@id/ccBtn"
-        app:layout_constraintDimensionRatio="584:730"
-        app:layout_constraintEnd_toStartOf="@id/rcBtn"
-        app:layout_constraintStart_toEndOf="@id/lcBtn"
-        app:layout_constraintTop_toBottomOf="@id/ctBtn" />
-
-    <Button
-        android:id="@+id/needHealing"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="#FFFFFF"
-        android:text="x"
-        app:layout_constraintBottom_toBottomOf="@id/img"
-        app:layout_constraintHorizontal_bias="0.454"
-        app:layout_constraintLeft_toLeftOf="@id/img"
-        app:layout_constraintRight_toRightOf="@id/img"
-        app:layout_constraintTop_toTopOf="@id/img"
-        app:layout_constraintVertical_bias="0.726" />
 </android.support.constraint.ConstraintLayout>

@@ -166,12 +166,12 @@ open class DialogOptions() : Parcelable {
     var gravityAsView = DialogGravity.CENTER_BOTTOM
 
     /**
-     * x轴坐标值
+     * x轴坐标值，用于特殊动画时定位dialog
      */
     var dialogViewX: Int = 0
 
     /**
-     * y轴坐标值
+     * y轴坐标值，用于特殊动画时定位dialog
      */
     var dialogViewY: Int = 0
 
