@@ -3,15 +3,18 @@ package com.ly.genjidialogv2
 import android.widget.Toast
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.extensions.addShowDismissListener
-import com.ly.genjidialog.extensions.dialogOptionsFun
 import com.ly.genjidialog.other.DialogOptions
 
 class AAA : GenjiDialog() {
-    override fun extendsOptions(): DialogOptions? {
-        return dialogOptionsFun {
+
+    override fun extendsOptions(): DialogOptions {
+        /*继承GenjiDialog的时候一定要使用getDialogOptions()，用原有的进行修改*/
+        return getDialogOptions().apply {
             layoutId = R.layout.aaa
-            isFullHorizontal = true
-            isFullVerticalOverStatusBar = true
+            //isFullHorizontal = true
+           /* animStyle = if ((getMyActivity() as MainActivity).isScale) R.style.ScaleADEnterExitAnimationX50Y50
+            else R.style.AlphaEnterExitAnimation*/
+            //isFullVerticalOverStatusBar = true
             addShowDismissListener("aaa") {
                 onDialogShow {
                     Toast.makeText(getMyActivity(), "aaa", Toast.LENGTH_SHORT).show()

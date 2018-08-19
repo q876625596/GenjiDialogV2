@@ -248,23 +248,23 @@ open class DialogOptions() : Parcelable {
                     //是否预留statusBar
                     (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows.let {
                         //（与activity保持一致）
-                        genjiDialog.dialog.window.decorView.fitsSystemWindows = it
+                        genjiDialog.dialog.window?.decorView?.fitsSystemWindows = it
                         if (it) {//无论是否预留了statusBar，都将dialog设置可占满全屏
-                            genjiDialog.dialog.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            genjiDialog.dialog.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             //此时可以设置dialogStatusBarColor
                             //genjiDialog.dialog.window.statusBarColor = dialogStatusBarColor
                         } else {//如果不预留statusrBar，那么dialog设置可占满全屏
-                            genjiDialog.dialog.window.decorView.systemUiVisibility = window.decorView.systemUiVisibility
+                            genjiDialog.dialog.window?.decorView?.systemUiVisibility = window.decorView.systemUiVisibility
                         }
                     }
                     //genjiDialog.dialog.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 } else {//非沉浸式状态栏（包括普通的带状态栏页面以及全屏无状态栏页面）此时的statusBarColor不生效
-                    genjiDialog.dialog.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                    genjiDialog.dialog.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
                     //genjiDialog.dialog.window.statusBarColor = dialogStatusBarColor
                 }
             }
         } else {//4.4 全透明状态栏
-            genjiDialog.dialog.window.addFlags(genjiDialog.getMyActivity().window.attributes.flags)
+            genjiDialog.dialog.window?.addFlags(genjiDialog.getMyActivity().window.attributes.flags)
         }
     }
 

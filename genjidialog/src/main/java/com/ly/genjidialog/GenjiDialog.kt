@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.annotation.StyleRes
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.*
 import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
@@ -85,7 +84,7 @@ open class GenjiDialog : RxDialogFragment() {
         setStyle(dialogOptions.dialogStyle, dialogOptions.dialogThemeFun.invoke(this))
         //恢复保存的配置
         if (savedInstanceState != null) {
-            dialogOptions = savedInstanceState.getParcelable(options)
+            dialogOptions = savedInstanceState.getParcelable(options)!!
         }
     }
 
