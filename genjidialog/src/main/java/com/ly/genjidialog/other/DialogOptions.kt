@@ -38,7 +38,7 @@ open class DialogOptions() : Parcelable {
      * dialog主题（如果有其他需求可重写该方法）
      */
     var dialogThemeFun: (genjiDialog: GenjiDialog) -> Int = {
-        it.getMyActivity().run {
+        it.dialogActivity.run {
             //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
             if (this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
@@ -241,7 +241,7 @@ open class DialogOptions() : Parcelable {
      */
     var setStatusBarModeFun: (genjiDialog: GenjiDialog) -> Unit = { genjiDialog ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0 全透明实现
-            genjiDialog.getMyActivity().apply {
+            genjiDialog.dialogActivity.apply {
                 //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
                 if (this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
@@ -264,7 +264,7 @@ open class DialogOptions() : Parcelable {
                 }
             }
         } else {//4.4 全透明状态栏
-            genjiDialog.dialog.window?.addFlags(genjiDialog.getMyActivity().window.attributes.flags)
+            genjiDialog.dialog.window?.addFlags(genjiDialog.dialogActivity.window.attributes.flags)
         }
     }
 

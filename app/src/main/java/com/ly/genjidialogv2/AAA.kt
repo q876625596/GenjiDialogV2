@@ -17,10 +17,10 @@ class AAA : GenjiDialog() {
             //isFullVerticalOverStatusBar = true
             addShowDismissListener("aaa") {
                 onDialogShow {
-                    Toast.makeText(getMyActivity(), "aaa", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(dialogActivity, "aaa", Toast.LENGTH_SHORT).show()
                 }
                 onDialogDismiss {
-                    Toast.makeText(getMyActivity(), "bbb", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(dialogActivity, "bbb", Toast.LENGTH_SHORT).show()
                 }
             }
             /*onKeyListenerFun { dialog, keyCode, event ->

@@ -25,7 +25,7 @@ open class GenjiDialog : RxDialogFragment() {
     lateinit var rootView: View
 
     /*绑定的activity*/
-    lateinit var mActivity: AppCompatActivity
+    lateinit var dialogActivity: AppCompatActivity
 
     /**
      * 执行顺序：2
@@ -33,7 +33,7 @@ open class GenjiDialog : RxDialogFragment() {
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mActivity = context as AppCompatActivity
+        dialogActivity = context as AppCompatActivity
     }
 
 
@@ -286,7 +286,7 @@ open class GenjiDialog : RxDialogFragment() {
                 //（包含StatusBar）真正的全屏
                 if (dialogOptions.isFullVerticalOverStatusBar) {
                     verticalMargin = 0f
-                    height = getScreenHeightOverStatusBar(mActivity) - 2 * dialogOptions.fullVerticalMargin
+                    height = getScreenHeightOverStatusBar(dialogActivity) - 2 * dialogOptions.fullVerticalMargin
                 }
                 //设置位置(如果设置了asView,那么gravity则永远为LEFT_TOP)
                 gravity = dialogOptions.gravity.index
