@@ -25,11 +25,7 @@ open class GenjiDialog : RxDialogFragment() {
     lateinit var rootView: View
 
     /*绑定的activity*/
-    private lateinit var mActivity: AppCompatActivity
-
-    fun getMyActivity(): AppCompatActivity {
-        return mActivity
-    }
+    lateinit var mActivity: AppCompatActivity
 
     /**
      * 执行顺序：2
@@ -44,7 +40,7 @@ open class GenjiDialog : RxDialogFragment() {
     /**
      * 是否已经dismiss，避免主动调用dismiss的时候与onStop中触发两次相同事件
      */
-    private val dismissed = AtomicBoolean(false)
+    val dismissed = AtomicBoolean(false)
 
     /**
      * 保存UI状态的标签
@@ -66,7 +62,7 @@ open class GenjiDialog : RxDialogFragment() {
     }
 
     /*懒加载，根据dialogOptions.duration来延迟加载实现懒加载（曲线救国）*/
-    private fun onLazy() {
+    open fun onLazy() {
         convertView(ViewHolder(rootView), this)
     }
 
