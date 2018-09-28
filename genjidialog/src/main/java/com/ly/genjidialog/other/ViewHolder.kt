@@ -36,14 +36,14 @@ class ViewHolder(var rootView: View, private var views: SparseArray<View> = Spar
     }
 
     fun setVisible(viewId: Int, visible: Boolean): ViewHolder {
-        getView<TextView>(viewId).let {
+        getView<View>(viewId).let {
             it!!.visibility = if (visible) View.VISIBLE else View.GONE
         }
         return this
     }
 
     fun setInVisible(viewId: Int, visible: Boolean): ViewHolder {
-        getView<TextView>(viewId).let {
+        getView<View>(viewId).let {
             it!!.visibility = if (visible) View.INVISIBLE else View.GONE
         }
         return this
