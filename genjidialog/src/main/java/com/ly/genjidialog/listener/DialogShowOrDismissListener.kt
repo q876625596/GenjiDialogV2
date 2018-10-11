@@ -23,6 +23,22 @@ class DialogShowOrDismissListener : Parcelable {
         dialogDismissFun = listener
     }
 
+    fun onAddDialogShow(listener: () -> Unit) {
+        val oldListener = dialogShowFun
+        dialogShowFun = {
+            oldListener?.invoke()
+            listener.invoke()
+        }
+    }
+
+    fun onAddDialogDismiss(listener: () -> Unit) {
+        val oldListener = dialogDismissFun
+        dialogDismissFun = {
+            oldListener?.invoke()
+            listener.invoke()
+        }
+    }
+
     fun onDialogShow() {
         dialogShowFun?.invoke()
     }

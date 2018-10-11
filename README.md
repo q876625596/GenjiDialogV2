@@ -24,9 +24,17 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.1.6'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.1.7'
 }
 ```
+
+#### 版本更新
+
+##### v1.1.7
+    为dialog的show和dismiss新增增量方法onAddDialogShow和onAddDialogDismiss，用于在同一个监听中新增逻辑
+##### v1.1.6
+    修复viewHolder中的setVisible类型转换问题，kotlin升级到1.2.71
+
 废话不多说，直接上图
 
 ![onWindow](image/show_on_window.gif)
