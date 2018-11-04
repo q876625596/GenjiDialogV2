@@ -1,27 +1,31 @@
-package com.ly.customviewlearn
+package com.ly.genjidialog.mask
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import com.ly.genjidialog.R
 
 
 class MaskView : View {
 
     private var paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
+    //MaskView的实际宽高
     private var trueWidth = 0
     private var trueHeight = 0
 
+    //高亮区域类型
     private var highlightAreaType = HighlightAreaType.TRANSPARENT_CUBE
 
+    //高亮区域属性
     var highlightArea = HighlightArea()
         set(value) {
             field = value
             invalidate()
         }
 
-    //需要绘制的bitmap
+    //高亮区域需要绘制的bitmap
     var highlightBitmap: Bitmap? = null
         set(value) {
             field = value
@@ -43,7 +47,7 @@ class MaskView : View {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        // 加载自定义属性集合CircleView
+        // 加载自定义属性集合
         val a = context.obtainStyledAttributes(attrs, R.styleable.MaskView)
         highlightAreaType = when (a.getInt(R.styleable.MaskView_mask_highlightAreaType, HighlightAreaType.TRANSPARENT_CUBE.value)) {
             0 -> HighlightAreaType.TRANSPARENT_CUBE
@@ -65,7 +69,7 @@ class MaskView : View {
             }
         }
         maskAlpha = a.getFloat(R.styleable.MaskView_mask_Alpha, 0.5f)
-
+        a.recycle()
     }
 
     override fun onDraw(canvas: Canvas) {

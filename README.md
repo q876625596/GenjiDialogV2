@@ -24,12 +24,36 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.1.7'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.1.8'
 }
 ```
 
 #### 版本更新
 
+##### v1.1.8
+    1、kotlin升级到1.3.0
+    2、新增自定义控件MaskView，可做新用户引导层。
+使用方法
+``` kotlin
+ newGenjiDialog {
+    layoutId = R.layout.dialog_mask
+    dimAmount = 0f
+    isFullHorizontal = true
+    isFullVerticalOverStatusBar = true
+    gravity = DialogGravity.CENTER_CENTER
+    animStyle = R.style.AlphaEnterExitAnimation
+    convertListenerFun { holder, dialog ->
+        holder.getView<MaskView>(R.id.maskView)?.apply {
+        this.highlightArea = HighlightArea(RectF(
+                                this@MaskViewActivity.btn.left.toFloat(),
+                                this@MaskViewActivity.btn.top.toFloat(),
+                                this@MaskViewActivity.btn.right.toFloat(),
+                                this@MaskViewActivity.btn.bottom.toFloat()))
+            }
+        }
+    }.showOnWindow(supportFragmentManager)
+```
+详细设置请看MaskView中注释，十分详细
 ##### v1.1.7
     为dialog的show和dismiss新增增量方法onAddDialogShow和onAddDialogDismiss，用于在同一个监听中新增逻辑
 ##### v1.1.6

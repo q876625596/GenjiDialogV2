@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontwarn com.trello.rxlifecycle3.RxLifecycle
+-dontwarn com.trello.rxlifecycle3.LifecycleProvider
+-dontwarn com.trello.rxlifecycle3.LifecycleTransformer
+-dontwarn com.trello.rxlifecycle3.OutsideLifecycleException
