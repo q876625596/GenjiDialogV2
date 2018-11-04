@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MaskView">
+        <attr name="mask_highlightAreaType" format="enum">
+            <enum name="TRANSPARENT_CUBE" value="0" />
+            <enum name="BITMAP" value="1" />
+        </attr>
+        <!--高亮区域的RectF-->
+        <attr name="mask_highlightAreaLeft" format="dimension" />
+        <attr name="mask_highlightAreaTop" format="dimension" />
+        <attr name="mask_highlightAreaRight" format="dimension" />
+        <attr name="mask_highlightAreaBottom" format="dimension" />
+        <!--高亮区域Radius-->
+        <attr name="mask_highlightAreaRadius" format="dimension" />
+        <!--如需在高亮区域绘制bitmap，当highlightAreaType==HighlightAreaType.BITMAP时生效-->
+        <attr name="mask_highlightBitmap" format="reference" />
+        <!--背景虚化alpha值，0-1-->
+        <attr name="mask_Alpha" format="float" />
+    </declare-styleable>
+</resources>
