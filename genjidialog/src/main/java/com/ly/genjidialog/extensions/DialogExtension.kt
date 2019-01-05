@@ -2,7 +2,10 @@ package com.ly.genjidialog.extensions
 
 import android.content.DialogInterface
 import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
 import com.ly.genjidialog.GenjiDialog
+import com.ly.genjidialog.listener.DataConvertListener
 import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
@@ -41,6 +44,29 @@ inline fun DialogOptions.convertListenerFun(crossinline listener: (holder: ViewH
     }
     convertListener = viewConvertListener
 }
+
+/**
+ * 设置dataListener的扩展方法
+ */
+inline fun DialogOptions.dataConvertListenerFun(crossinline listener: (dialogBinding: Any, dialog: GenjiDialog) -> Unit) {
+    val dataBindingConvertListener = object : DataConvertListener() {
+        override fun convertView(dialogBinding: Any, dialog: GenjiDialog) {
+            listener.invoke(dialogBinding, dialog)
+        }
+    }
+    dataConvertListener = dataBindingConvertListener
+}
+
+/**
+ * 设置dataBindingListener的扩展方法
+ */
+inline fun DialogOptions.bindingListenerFun(crossinline listener: (container: ViewGroup?,dialog:GenjiDialog) -> View) {
+    val newBindingListener = { container: ViewGroup?,dialog:GenjiDialog ->
+        listener.invoke(container,dialog)
+    }
+    bindingListener = newBindingListener
+}
+
 
 /**
  * 添加DialogShowOrDismissListener的扩展方法

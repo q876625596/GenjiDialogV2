@@ -24,11 +24,53 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.1.8'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.1.9'
 }
 ```
 
 #### 版本更新
+
+##### v1.1.9   重要更新
+
+    1、kotlin升级到1.3.11
+    2、新增初始化模式，现有3种模式，具体请看表格
+    3、支持DataBinding
+使用方法
+
+-改变初始化模式
+``` kotlin
+ newGenjiDialog {
+    ......
+    initMode = DialogInitMode.DRAW_COMPLETE //DialogInitMode.DRAW_COMPLETE为默认模式
+    ......
+    }.showOnWindow(supportFragmentManager)
+```
+
+-DataBinding的绑定方法
+``` kotlin
+newGenjiDialog {
+    //绑定DataBinding则不需要设置layoutId
+    //layoutId = R.layout.aaa
+    gravity = DialogGravity.CENTER_CENTER
+    animStyle = R.style.BottomTransAlphaADAnimation
+    //此方法用于创建布局对应的DataBinding,并且将创建的binding赋给dialog中的dialogBinding字段
+    //最后返回视图   binding.root
+    bindingListenerFun { container, dialog ->
+        return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
+            this.textStr = "hello"
+            dialog.dialogBinding = this
+        }.root
+    }
+    //初始化赋值操作   也可以在bindingListenerFun中操作
+    dataConvertListenerFun { dialogBinding, dialog ->
+        dialogBinding as AaaBinding
+        dialogBinding.text = "hello1"
+    }
+}.showOnWindow(supportFragmentManager)
+```
+
+
+
 
 ##### v1.1.8
     1、kotlin升级到1.3.0
@@ -263,7 +305,7 @@ newGenjiDialog { genjiDialog ->
 | setOnEnterAnimator(fun) | dialog的进入动画，这个动画是用于一些特殊情况，比如上面的带遮罩的滑出动画，默认：null |
 | exitAnimator(fun) | dialog的退出动画，同上 （这两个动画的示例请看上面带遮罩滑出动画的代码，也可以去源码查看）|
 | canClick | 否可以触发取消，默认：true，比如在动画开始时将此属性设置false，防止在动画进行时，被再次触发动画，当使用上面两种自定义特殊动画时，我已经默认添加了改变这个状态值的监听 |
-| isLazy | 是否懒加载，默认：false，是否在动画完成时才执行convertListener |
+| initMode | 初始化模式，默认：DialogInitMode.DRAW_COMPLETE，表示在视图绘制完成时调用convertListener，其余类型请查看DialogInitMode类 |
 | duration | 懒加载的延时，默认：0L，配合isLazy使用，这个值一般设置为动画的时长，为了保证动画流畅 |
 | dialogStatusBarColor | dialog的statusBar颜色，默认：透明，一般来说无需改变 |
 | width | dialog宽度，默认：0px |

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.R
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.unDisplayViewSize
+import com.ly.genjidialog.listener.DataConvertListener
 import com.ly.genjidialog.listener.DialogShowOrDismissListener
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
@@ -38,7 +39,7 @@ open class DialogOptions() : Parcelable {
      * dialog主题（如果有其他需求可重写该方法）
      */
     var dialogThemeFun: (genjiDialog: GenjiDialog) -> Int = {
-        it.dialogActivity.run {
+        it.dialogActivity!!.run {
             //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
             if (this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
@@ -81,8 +82,8 @@ open class DialogOptions() : Parcelable {
         setExitAnimatorFun = listener
     }
 
-    /*是否是懒加载*/
-    var isLazy = false
+    /*初始化模式，默认在图形绘制完成后加载*/
+    var initMode: DialogInitMode = DialogInitMode.DRAW_COMPLETE
 
     /**
      * dialog的statusBarColor
@@ -217,6 +218,15 @@ open class DialogOptions() : Parcelable {
      */
     var convertListener: ViewConvertListener? = null
 
+    /**
+     * dataBinding绑定
+     */
+    var bindingListener: ((container: ViewGroup?, dialog: GenjiDialog) -> View)? = null
+
+    /**
+     * dataBinding事件监听
+     */
+    var dataConvertListener: DataConvertListener? = null
 
     /**
      * 返回是否是依附在view上
@@ -243,7 +253,7 @@ open class DialogOptions() : Parcelable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0 全透明实现
             genjiDialog.dialogActivity.apply {
                 //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
-                if (this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                if (this!!.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
                     //是否预留statusBar
                     (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows.let {
@@ -264,7 +274,7 @@ open class DialogOptions() : Parcelable {
                 }
             }
         } else {//4.4 全透明状态栏
-            genjiDialog.dialog.window?.addFlags(genjiDialog.dialogActivity.window.attributes.flags)
+            genjiDialog.dialog.window?.addFlags(genjiDialog.dialogActivity!!.window.attributes.flags)
         }
     }
 
@@ -437,55 +447,55 @@ open class DialogOptions() : Parcelable {
         this.gravityAsView = gravityAsView
         //根据gravity判断显示的位置
         when (gravityAsView) {
-        //dialog显示在view的左上角
+            //dialog显示在view的左上角
             DialogGravity.LEFT_TOP -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX100Y100
                 this.dialogViewX = viewX - if (width != 0) width else dialogViewWidth + offsetX
                 this.dialogViewY = viewY - if (height != 0) height else dialogViewHeight + offsetY
             }
-        //dialog显示在view的上方
+            //dialog显示在view的上方
             DialogGravity.CENTER_TOP -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX50Y100
                 this.dialogViewX = viewX - ((if (width != 0) width else dialogViewWidth) - viewWidth) / 2 + offsetX
                 this.dialogViewY = viewY - if (height != 0) height else dialogViewHeight + offsetY
             }
-        //dialog显示在view的右上角
+            //dialog显示在view的右上角
             DialogGravity.RIGHT_TOP -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX0Y100
                 this.dialogViewX = viewX + viewWidth + offsetX
                 this.dialogViewY = viewY - if (height != 0) height else dialogViewHeight + offsetY
             }
-        //dialog显示在view的左边
+            //dialog显示在view的左边
             DialogGravity.LEFT_CENTER -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX100Y50
                 this.dialogViewX = viewX - if (width != 0) width else dialogViewWidth + offsetX
                 this.dialogViewY = viewY - ((if (height != 0) height else dialogViewHeight) - viewHeight) / 2 + offsetY
             }
-        //dialog显示在view的正中心
+            //dialog显示在view的正中心
             DialogGravity.CENTER_CENTER -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX50Y50
                 this.dialogViewX = viewX - ((if (width != 0) width else dialogViewWidth) - viewWidth) / 2 + offsetX
                 this.dialogViewY = viewY - ((if (height != 0) height else dialogViewHeight) - viewHeight) / 2 + offsetY
             }
-        //dialog显示在view的右边
+            //dialog显示在view的右边
             DialogGravity.RIGHT_CENTER -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX0Y50
                 this.dialogViewX = viewX + viewWidth + offsetX
                 this.dialogViewY = viewY - ((if (height != 0) height else dialogViewHeight) - viewHeight) / 2 + offsetY
             }
-        //dialog显示在view的左下角
+            //dialog显示在view的左下角
             DialogGravity.LEFT_BOTTOM -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX100Y0
                 this.dialogViewX = viewX - if (width != 0) width else dialogViewWidth + offsetX
                 this.dialogViewY = viewY + viewHeight + offsetY
             }
-        //dialog显示在view的下方
+            //dialog显示在view的下方
             DialogGravity.CENTER_BOTTOM -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX50Y0
                 this.dialogViewX = viewX - ((if (width != 0) width else dialogViewWidth) - viewWidth) / 2 + offsetX
                 this.dialogViewY = viewY + viewHeight + offsetY
             }
-        //dialog显示在view的右下角
+            //dialog显示在view的右下角
             DialogGravity.RIGHT_BOTTOM -> {
                 if (this.animStyle == 0) this.animStyle = R.style.ScaleOverShootEnterExitAnimationX0Y0
                 this.dialogViewX = viewX + viewWidth + offsetX
@@ -513,7 +523,7 @@ open class DialogOptions() : Parcelable {
         //根据dialog的位置来设置默认anim
         when (gravity.index) {
 
-        //左上(默认动画从左至右加速减速)
+            //左上(默认动画从左至右加速减速)
             DialogGravity.LEFT_TOP.index,
                 //左中(默认动画从左至右加速减速)
             DialogGravity.LEFT_CENTER.index,
@@ -521,7 +531,7 @@ open class DialogOptions() : Parcelable {
             DialogGravity.LEFT_BOTTOM.index ->
                 animStyle = R.style.LeftTransAlphaADAnimation
 
-        //右上(默认动画从右至左加速减速)
+            //右上(默认动画从右至左加速减速)
             DialogGravity.RIGHT_TOP.index,
                 //右中(默认动画从右至左加速减速)
             DialogGravity.RIGHT_CENTER.index,
@@ -529,18 +539,18 @@ open class DialogOptions() : Parcelable {
             DialogGravity.RIGHT_BOTTOM.index ->
                 animStyle = R.style.RightTransAlphaADAnimation
 
-        //正中(默认动画渐入渐出)
+            //正中(默认动画渐入渐出)
             DialogGravity.CENTER_CENTER.index ->
                 animStyle = R.style.AlphaEnterExitAnimation
 
-        //中上(默认动画从上至下加速减速)
+            //中上(默认动画从上至下加速减速)
             DialogGravity.CENTER_TOP.index ->
                 animStyle = R.style.TopTransAlphaADAnimation
 
-        //中下(默认动画从下至上加速减速)
+            //中下(默认动画从下至上加速减速)
             DialogGravity.CENTER_BOTTOM.index ->
                 animStyle = R.style.BottomTransAlphaADAnimation
-        //默认动画淡入淡出
+            //默认动画淡入淡出
             else ->
                 animStyle = R.style.AlphaEnterExitAnimation
         }

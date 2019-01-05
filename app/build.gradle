@@ -14,6 +14,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    dataBinding {
+        enabled = true
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -40,4 +44,8 @@ dependencies {
     implementation 'com.trello.rxlifecycle2:rxlifecycle:2.2.2'
     implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
     implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.2'
 }

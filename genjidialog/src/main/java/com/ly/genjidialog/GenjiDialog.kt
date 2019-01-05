@@ -3,9 +3,11 @@ package com.ly.genjidialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Looper
 import android.support.annotation.StyleRes
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.*
 import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
@@ -13,6 +15,7 @@ import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOve
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenWidth
 import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.other.DialogGravity
+import com.ly.genjidialog.other.DialogInitMode
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
 import com.trello.rxlifecycle2.components.support.RxDialogFragment
@@ -22,10 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 open class GenjiDialog : RxDialogFragment() {
 
     /*根布局*/
-    lateinit var rootView: View
+    var rootView: View? = null
+
+
+    var dialogBinding: Any? = null
 
     /*绑定的activity*/
-    lateinit var dialogActivity: AppCompatActivity
+    var dialogActivity: AppCompatActivity? = null
 
     /**
      * 执行顺序：2
@@ -36,6 +42,26 @@ open class GenjiDialog : RxDialogFragment() {
         dialogActivity = context as AppCompatActivity
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        dialogActivity = null
+
+    }
+
+    /**
+     *  执行顺序：5
+     */
+    override fun onStart() {
+        super.onStart()
+        //初始化配置
+        initParams()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rootView = null
+        dialogBinding = null
+    }
 
     /**
      * 是否已经dismiss，避免主动调用dismiss的时候与onStop中触发两次相同事件
@@ -63,7 +89,11 @@ open class GenjiDialog : RxDialogFragment() {
 
     /*懒加载，根据dialogOptions.duration来延迟加载实现懒加载（曲线救国）*/
     open fun onLazy() {
-        convertView(ViewHolder(rootView), this)
+        if (dialogOptions.bindingListener != null) {
+            dataConvertView(dialogBinding!!, this)
+        } else {
+            convertView(ViewHolder(rootView!!), this)
+        }
     }
 
     /**
@@ -84,21 +114,50 @@ open class GenjiDialog : RxDialogFragment() {
         }
     }
 
+    /*将图形绘制完成后的操作放进队列*/
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        when (dialogOptions.initMode) {
+            DialogInitMode.NORMAL -> {
+                //直接加载
+                if (dialogOptions.bindingListener != null) {
+                    dataConvertView(dialogBinding!!, this)
+                } else {
+                    convertView(ViewHolder(rootView!!), this)
+                }
+            }
+            DialogInitMode.LAZY -> {
+                //根据时间间隔懒加载
+                rootView!!.postDelayed({
+                    onLazy()
+                }, dialogOptions.duration)
+            }
+            DialogInitMode.DRAW_COMPLETE -> {
+                //图形绘制完成时加载
+                Looper.myQueue().addIdleHandler {
+                    //耗时操作
+                    if (dialogOptions.bindingListener != null) {
+                        dataConvertView(dialogBinding!!, this)
+                    } else {
+                        convertView(ViewHolder(rootView!!), this)
+                    }
+                    //返回false代表在这个IdleHandler被回调一次后就会被销毁。true代表可以一直被回调。
+                    false
+                }
+            }
+        }
+    }
+
+
     /**
      * 执行顺序：4
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //加载布局
-        rootView = inflater.inflate(dialogOptions.layoutId, container, false)
-        //unDisplayViewSize(view)
-        if (!dialogOptions.isLazy) {
-            convertView(ViewHolder(rootView), this)
-        } else {
-            //懒加载
-            rootView.postDelayed({
-                onLazy()
-            }, dialogOptions.duration)
+        if (dialogOptions.bindingListener != null) {
+            return dialogOptions.bindingListener!!.invoke(container, this)
         }
+        rootView = inflater.inflate(dialogOptions.layoutId, container, false)
         return rootView
     }
 
@@ -110,12 +169,10 @@ open class GenjiDialog : RxDialogFragment() {
     }
 
     /**
-     *  执行顺序：5
+     * 数据绑定到视图/视图控件监听等   dataBinding方式
      */
-    override fun onStart() {
-        super.onStart()
-        //初始化配置
-        initParams()
+    private fun dataConvertView(dialogBinding: Any, dialog: GenjiDialog) {
+        dialogOptions.dataConvertListener?.convertView(dialogBinding, dialog)
     }
 
     /**
@@ -147,7 +204,7 @@ open class GenjiDialog : RxDialogFragment() {
                 if (dismissed.compareAndSet(false, true)) {
                     executeDismissListener()
                     super.dismiss()
-
+                    clearDialogLeakListener()
                 }
             } else {//如果有动画
                 //直接执行动画，该动画已经设置过监听，将会在结束动画时调用super.dismiss()方法
@@ -155,6 +212,17 @@ open class GenjiDialog : RxDialogFragment() {
             }
         }
 
+    }
+
+    /**
+     * 解决dialog和dialogFragment相互持有message
+     */
+    private fun clearDialogLeakListener() {
+        Log.e("main", "leak")
+        dialog.setOnKeyListener(null)
+        dialog.setOnShowListener(null)
+        dialog.setOnCancelListener(null)
+        dialog.setOnDismissListener(null)
     }
 
     /**
@@ -169,6 +237,7 @@ open class GenjiDialog : RxDialogFragment() {
             return
         }
         executeDismissListener()
+        clearDialogLeakListener()
     }
 
     /**
@@ -217,6 +286,7 @@ open class GenjiDialog : RxDialogFragment() {
             if (dismissed.compareAndSet(false, true)) {
                 executeDismissListener()
                 super.dismiss()
+                clearDialogLeakListener()
             }
             dialogOptions.canClick = true
         }
@@ -286,7 +356,7 @@ open class GenjiDialog : RxDialogFragment() {
                 //（包含StatusBar）真正的全屏
                 if (dialogOptions.isFullVerticalOverStatusBar) {
                     verticalMargin = 0f
-                    height = getScreenHeightOverStatusBar(dialogActivity) - 2 * dialogOptions.fullVerticalMargin
+                    height = getScreenHeightOverStatusBar(dialogActivity!!) - 2 * dialogOptions.fullVerticalMargin
                 }
                 //设置位置(如果设置了asView,那么gravity则永远为LEFT_TOP)
                 gravity = dialogOptions.gravity.index
@@ -361,7 +431,7 @@ open class GenjiDialog : RxDialogFragment() {
             removeAsView()
             loadAnim()
         }
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -378,7 +448,7 @@ open class GenjiDialog : RxDialogFragment() {
             removeAsView()
             loadAnim()
         }
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -397,7 +467,7 @@ open class GenjiDialog : RxDialogFragment() {
             removeAsView()
             loadAnim()
         }
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -448,7 +518,7 @@ open class GenjiDialog : RxDialogFragment() {
     fun showOnView(manager: FragmentManager, view: View): GenjiDialog {
         executeShowListener()
         dialogOptions.dialogAsView(view, dialogOptions.gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -462,7 +532,7 @@ open class GenjiDialog : RxDialogFragment() {
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView): GenjiDialog {
         executeShowListener()
         dialogOptions.dialogAsView(view, gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -477,7 +547,7 @@ open class GenjiDialog : RxDialogFragment() {
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle): GenjiDialog {
         executeShowListener()
         dialogOptions.dialogAsView(view, gravityAsView, newAnim, dialogOptions.offsetX, dialogOptions.offsetY)
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -494,7 +564,7 @@ open class GenjiDialog : RxDialogFragment() {
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle, offsetX: Int = dialogOptions.offsetX, offsetY: Int = dialogOptions.offsetY): GenjiDialog {
         executeShowListener()
         dialogOptions.dialogAsView(view, gravityAsView, newAnim, offsetX, offsetY)
-        super.show(manager, System.currentTimeMillis().toString())
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
