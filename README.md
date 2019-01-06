@@ -35,7 +35,9 @@ dependencies {
     主要修复一个内存泄露bug，这是google留下的坑
     bug描述：当DialogFragment非一次性使用的时候，在dismiss()之后，dialogFragment和dialog的Message依旧相互引用，导致内存泄露。
     解决方式：改写show方法，通过反射拿到状态值，然后在dismiss和show的时候仅使用dialog的方法
-    注意事项：由于这样做，会使dialogFragment始终被add到fragmentManager中，所以，当在同一个activity使用多个dialogFragment时，需要注意管控，但是我建议每次使用时都newGenjiDialog{}，只需要保存数据就行了
+    注意事项：由于这样做，会使dialogFragment始终被add到fragmentManager中，
+    所以，当在同一个activity使用多个dialogFragment时，需要注意管控，
+    但是我建议每次使用时都newGenjiDialog{}，只需要保存数据就行了
 
 -使用方法（当不是一次性使用时）
 ``` kotlin
