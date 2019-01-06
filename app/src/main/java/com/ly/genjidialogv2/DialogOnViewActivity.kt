@@ -31,6 +31,7 @@ class DialogOnViewActivity : AppCompatActivity() {
             layoutId = R.layout.aaa
             width = 329
             height = 252
+            unLeak = true
             convertListenerFun { holder, dialog ->
                 holder.setOnClickListener(R.id.image) {
                     Toast.makeText(this@DialogOnViewActivity, "I need healing", Toast.LENGTH_SHORT).show()

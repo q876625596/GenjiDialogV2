@@ -5,6 +5,12 @@
     android:layout_height="match_parent">
 
 
+    <TextView
+        android:id="@+id/textTest"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="sdfkjasdklf" />
+
     <Button
         android:id="@+id/onWindowBtn"
         android:layout_width="wrap_content"

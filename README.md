@@ -24,11 +24,28 @@ allprojects {
 
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.1.9'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.2.0'
 }
 ```
 
 #### 版本更新
+
+##### v1.2.0   同样是重要更新
+
+    主要修复一个内存泄露bug，这是google留下的坑
+    bug描述：当DialogFragment非一次性使用的时候，在dismiss()之后，dialogFragment和dialog的Message依旧相互引用，导致内存泄露。
+    解决方式：改写show方法，通过反射拿到状态值，然后在dismiss和show的时候仅使用dialog的方法
+    注意事项：由于这样做，会使dialogFragment始终被add到fragmentManager中，所以，当在同一个activity使用多个dialogFragment时，需要注意管控，但是我建议每次使用时都newGenjiDialog{}，只需要保存数据就行了
+
+-使用方法（当不是一次性使用时）
+``` kotlin
+val testDialog =  newGenjiDialog {
+    ......
+    //只需要将unLeak属性设置为true
+    unLeak = true
+    ......
+    }.showOnWindow(supportFragmentManager)
+```
 
 ##### v1.1.9   重要更新
 
@@ -57,11 +74,12 @@ newGenjiDialog {
     //最后返回视图   binding.root
     bindingListenerFun { container, dialog ->
         return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
+            this.setLifecycleOwner(dialog)
             this.textStr = "hello"
             dialog.dialogBinding = this
         }.root
     }
-    //初始化赋值操作   也可以在bindingListenerFun中操作
+    //初始化赋值操作(非必须)   也可以在bindingListenerFun中操作
     dataConvertListenerFun { dialogBinding, dialog ->
         dialogBinding as AaaBinding
         dialogBinding.text = "hello1"

@@ -31,6 +31,17 @@ open class DialogOptions() : Parcelable {
 
 
     /**
+     * 是否启用防止内存泄露模式
+     * 当在activity中使用GenjiDialog时，如果不是一次性使用，而是被一个对象引用，多次使用
+     * 那么由于google留下的坑，会导致内存泄露（dialogFragment 和 dialog之间的message相互引用）
+     * 此时就需要将该属性设置为true，
+     * 原理就是只调用dialog.dismiss方法，而不调用DialogFragment的dismiss方法,
+     * 这样会使dialogFragment并没有被remove掉，一直在fragmentManager中
+     * 一般来说问题不大,但是如果一个页面上使用了多个DialogFragment的时候，则需要注意一下其生命周期的管理
+     */
+    var unLeak = false
+
+    /**
      *  dialog样式
      */
     var dialogStyle = DialogFragment.STYLE_NO_TITLE

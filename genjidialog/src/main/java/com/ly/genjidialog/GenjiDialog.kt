@@ -1,5 +1,6 @@
 package com.ly.genjidialog
 
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.ly.genjidialog.other.DialogInitMode
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
 import com.trello.rxlifecycle2.components.support.RxDialogFragment
+import java.lang.reflect.Field
 import java.util.concurrent.atomic.AtomicBoolean
 
 /*为了方便查看，我将每一个方法和其所需的对应属性放在一起*/
@@ -32,6 +34,11 @@ open class GenjiDialog : RxDialogFragment() {
 
     /*绑定的activity*/
     var dialogActivity: AppCompatActivity? = null
+
+    private var isDismissed: Field? = null
+    private var isShownByMe: Field? = null
+
+    private var myIsShow = false
 
     /**
      * 执行顺序：2
@@ -52,9 +59,27 @@ open class GenjiDialog : RxDialogFragment() {
      *  执行顺序：5
      */
     override fun onStart() {
+        //防止熄屏之后重启导致再次显示
+        if (isDismissed != null && !myIsShow) {
+            Log.e("main", "asssss")
+            val myDialog = this.javaClass.superclass.superclass.getDeclaredField("mDialog")
+            myDialog.isAccessible = true
+            val tempDialog = myDialog.get(this) as Dialog
+            myDialog.set(this, null)
+            super.onStart()
+            myDialog.set(this, tempDialog)
+            return
+        }
         super.onStart()
-        //初始化配置
+        myIsShow = true
         initParams()
+        //初始化配置
+        if (dialogOptions.unLeak && isDismissed == null) {
+            isDismissed = this.javaClass.superclass.superclass.getDeclaredField("mDismissed")
+            isShownByMe = this.javaClass.superclass.superclass.getDeclaredField("mShownByMe")
+            isDismissed?.isAccessible = true
+            isShownByMe?.isAccessible = true
+        }
     }
 
     override fun onDestroy() {
@@ -117,6 +142,9 @@ open class GenjiDialog : RxDialogFragment() {
     /*将图形绘制完成后的操作放进队列*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (dialogOptions.unLeak) {
+            return
+        }
         when (dialogOptions.initMode) {
             DialogInitMode.NORMAL -> {
                 //直接加载
@@ -197,18 +225,24 @@ open class GenjiDialog : RxDialogFragment() {
      * 主动dismiss时会在onStop前调用（当采用特殊的view动画时，需要主动调用dismiss，才能生效退出动画）
      */
     override fun dismiss() {
+        myIsShow = false
         dialogOptions.exitAnimator.apply {
-            //如果没自定义的view动画，那么直接执行
-            if (this == null) {
-                //如果没有执行过监听操作才执行，并且把监听设为已执行状态
-                if (dismissed.compareAndSet(false, true)) {
-                    executeDismissListener()
-                    super.dismiss()
-                    clearDialogLeakListener()
-                }
-            } else {//如果有动画
-                //直接执行动画，该动画已经设置过监听，将会在结束动画时调用super.dismiss()方法
+            //如果有动画
+            //直接执行动画，该动画已经设置过监听，将会在结束动画时调用super.dismiss()方法
+            if (this != null) {
                 this.start()
+                return
+            }
+            //如果没自定义的view动画，那么直接执行
+            //如果设置了防内存泄露，那么只调用dialog.dismiss
+            if (dialogOptions.unLeak) {
+                dialog.dismiss()
+                return
+            }
+            //如果没有执行过监听操作才执行，并且把监听设为已执行状态
+            if (dismissed.compareAndSet(false, true)) {
+                executeDismissListener()
+                super.dismiss()
             }
         }
 
@@ -218,11 +252,50 @@ open class GenjiDialog : RxDialogFragment() {
      * 解决dialog和dialogFragment相互持有message
      */
     private fun clearDialogLeakListener() {
-        Log.e("main", "leak")
-        dialog.setOnKeyListener(null)
-        dialog.setOnShowListener(null)
-        dialog.setOnCancelListener(null)
-        dialog.setOnDismissListener(null)
+        //dialog.setOnKeyListener(dialogOptions.onKeyListener)
+        dialog.setOnDismissListener {
+            executeDismissListener()
+        }
+        //dialog.setOnCancelListener(null)
+        dialog.setOnShowListener {
+            when (dialogOptions.initMode) {
+                DialogInitMode.NORMAL -> {
+                    //直接加载
+                    if (dialogOptions.bindingListener != null) {
+                        dataConvertView(dialogBinding!!, this)
+                    } else {
+                        convertView(ViewHolder(rootView!!), this)
+                    }
+                }
+                DialogInitMode.LAZY -> {
+                    //根据时间间隔懒加载
+                    rootView!!.postDelayed({
+                        onLazy()
+                    }, dialogOptions.duration)
+                }
+                DialogInitMode.DRAW_COMPLETE -> {
+                    //图形绘制完成时加载
+                    Looper.myQueue().addIdleHandler {
+                        //耗时操作
+                        if (dialogOptions.bindingListener != null) {
+                            dataConvertView(dialogBinding!!, this)
+                        } else {
+                            convertView(ViewHolder(rootView!!), this)
+                        }
+                        //返回false代表在这个IdleHandler被回调一次后就会被销毁。true代表可以一直被回调。
+                        false
+                    }
+                }
+            }
+            executeShowListener()
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (dialogOptions.unLeak) {
+            clearDialogLeakListener()
+        }
     }
 
     /**
@@ -232,12 +305,19 @@ open class GenjiDialog : RxDialogFragment() {
      */
     override fun onStop() {
         super.onStop()
+        Log.e("main", "stop")
+
+        if (isDismissed == null) {
+            myIsShow = false
+        }
         //判断时候已经执行过dismiss的监听操作，如果已执行过，那么重新设为未执行监听状态
         if (dismissed.compareAndSet(true, false)) {
             return
         }
-        executeDismissListener()
-        clearDialogLeakListener()
+        //当防止内存泄露为false的时候才执行
+        if (!dialogOptions.unLeak) {
+            executeDismissListener()
+        }
     }
 
     /**
@@ -283,10 +363,13 @@ open class GenjiDialog : RxDialogFragment() {
             dialogOptions.canClick = false
         }.onAnimatorEnd {
             //退出动画结束时调用super.dismiss()
-            if (dismissed.compareAndSet(false, true)) {
-                executeDismissListener()
-                super.dismiss()
-                clearDialogLeakListener()
+            if (dialogOptions.unLeak) {
+                dialog.dismiss()
+            } else {
+                if (dismissed.compareAndSet(false, true)) {
+                    executeDismissListener()
+                    super.dismiss()
+                }
             }
             dialogOptions.canClick = true
         }
@@ -424,13 +507,26 @@ open class GenjiDialog : RxDialogFragment() {
      * @param manager
      */
     fun showOnWindow(manager: FragmentManager): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.apply {
             this.gravity = dialogOptions.gravity
             this.animStyle = dialogOptions.animStyle
             removeAsView()
             loadAnim()
         }
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -441,13 +537,26 @@ open class GenjiDialog : RxDialogFragment() {
      * @param gravity dialog相对于屏幕的位置(默认为上一次设置的位置)
      */
     fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.apply {
             this.gravity = gravity
             this.animStyle = dialogOptions.animStyle
             removeAsView()
             loadAnim()
         }
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -460,13 +569,26 @@ open class GenjiDialog : RxDialogFragment() {
      * @param newAnim 新的动画(默认为上一次设置的动画)
      */
     fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.apply {
             this.gravity = gravity
             this.animStyle = newAnim
             removeAsView()
             loadAnim()
         }
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -479,14 +601,27 @@ open class GenjiDialog : RxDialogFragment() {
      * @param tag
      */
     fun showOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle, tag: String?): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.apply {
             this.gravity = gravity
             this.animStyle = newAnim
             removeAsView()
             loadAnim()
         }
-        super.show(manager, tag)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
+        super.show(manager, this.hashCode().toString())
         return this
     }
 
@@ -498,14 +633,27 @@ open class GenjiDialog : RxDialogFragment() {
      * @param tag
      */
     fun showNowOnWindow(manager: FragmentManager, gravity: DialogGravity = dialogOptions.gravity, @StyleRes newAnim: Int? = dialogOptions.animStyle, tag: String?): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.apply {
             this.gravity = gravity
             this.animStyle = newAnim
             removeAsView()
             loadAnim()
         }
-        super.showNow(manager, tag)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
+        super.showNow(manager, this.hashCode().toString())
         return this
     }
 
@@ -516,8 +664,21 @@ open class GenjiDialog : RxDialogFragment() {
      * @param view 被依赖的view
      */
     fun showOnView(manager: FragmentManager, view: View): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.dialogAsView(view, dialogOptions.gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -530,8 +691,21 @@ open class GenjiDialog : RxDialogFragment() {
      * @param gravityAsView 相对于该view的位置(默认为上一次设置的位置)
      */
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.dialogAsView(view, gravityAsView, dialogOptions.animStyle, dialogOptions.offsetX, dialogOptions.offsetY)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -545,8 +719,21 @@ open class GenjiDialog : RxDialogFragment() {
      * @param newAnim 新的动画(默认为上一次的动画效果)
      */
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.dialogAsView(view, gravityAsView, newAnim, dialogOptions.offsetX, dialogOptions.offsetY)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }
@@ -562,8 +749,21 @@ open class GenjiDialog : RxDialogFragment() {
      * @param offsetY y轴的偏移量，(默认为上一次设置过的偏移量)
      */
     fun showOnView(manager: FragmentManager, view: View, gravityAsView: DialogGravity = dialogOptions.gravityAsView, @StyleRes newAnim: Int? = dialogOptions.animStyle, offsetX: Int = dialogOptions.offsetX, offsetY: Int = dialogOptions.offsetY): GenjiDialog {
-        executeShowListener()
+        myIsShow = true
         dialogOptions.dialogAsView(view, gravityAsView, newAnim, offsetX, offsetY)
+        if (dialogOptions.unLeak) {
+            return if (manager.fragments.contains(this)) {
+                initParams()
+                isDismissed?.set(this, false)
+                isShownByMe?.set(this, true)
+                dialog.show()
+                this
+            } else {
+                super.show(manager, this.hashCode().toString())
+                this
+            }
+        }
+        executeShowListener()
         super.show(manager, this.hashCode().toString())
         return this
     }

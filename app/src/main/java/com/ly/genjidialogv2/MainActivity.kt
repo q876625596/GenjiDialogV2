@@ -1,16 +1,15 @@
 package com.ly.genjidialogv2
 
+import android.arch.lifecycle.MutableLiveData
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import com.ly.genjidialog.GenjiDialog
-import com.ly.genjidialog.extensions.addShowDismissListener
-import com.ly.genjidialog.extensions.bindingListenerFun
-import com.ly.genjidialog.extensions.dataConvertListenerFun
-import com.ly.genjidialog.extensions.newGenjiDialog
+import com.ly.genjidialog.extensions.*
 import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialogv2.databinding.AaaBinding
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,10 +17,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     var testDialog: GenjiDialog? = null
+    var ttt = MutableLiveData<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ttt.value = "hello"
         onWindowBtn.setOnClickListener {
             startActivity(Intent(this, DialogOnWindowActivity::class.java))
         }
@@ -29,7 +30,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, DialogOnViewActivity::class.java))
         }
         maskSlideBtn.setOnClickListener {
-            startActivity(Intent(this, SlideWindowActivity::class.java))
+            ttt.value = "qwer"
+            //startActivity(Intent(this, SlideWindowActivity::class.java))
+        }
+        textTest.setOnClickListener {
+            Log.e("main", "aaaa")
         }
         testBtn.setOnClickListener {
             /* val aaa = AAA()
@@ -44,9 +49,12 @@ class MainActivity : AppCompatActivity() {
                 //layoutId = R.layout.aaa
                 gravity = DialogGravity.CENTER_CENTER
                 animStyle = R.style.BottomTransAlphaADAnimation
+                unLeak = true
                 bindingListenerFun { container, dialog ->
+                    Log.e("main", "bind")
                     return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
-                        this.textStr = "hello"
+                        this.setLifecycleOwner(dialog)
+                        this.act = this@MainActivity
                         //setVariable(BR.textStr,"hello")
                         dialog.dialogBinding = this
 
@@ -59,11 +67,24 @@ class MainActivity : AppCompatActivity() {
                 }*/
                 dataConvertListenerFun { dialogBinding, dialog ->
                     dialogBinding as AaaBinding
+                    dialogBinding.image.setOnClickListener {
+                        dialog.dismiss()
+                    }
                 }
                 addShowDismissListener("aa") {
+                    onDialogShow {
+                        Log.e("main", "show")
+                    }
                     onDialogDismiss {
                         Log.e("main", "ppppp")
                     }
+                }
+                onKeyListenerForOptions { dialog, keyCode, event ->
+                    Log.e("main", keyCode.toString())
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        return@onKeyListenerForOptions true
+                    }
+                    return@onKeyListenerForOptions false
                 }
 
             }.showOnWindow(supportFragmentManager)

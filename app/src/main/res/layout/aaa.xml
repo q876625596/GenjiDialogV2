@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="textStr"
-            type="String" />
+            name="act"
+            type="com.ly.genjidialogv2.MainActivity" />
     </data>
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,10 +24,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{textStr}"
+            android:text="@{act.ttt}"
             android:textColor="#66ccff"
             android:textSize="20sp"
             android:textStyle="bold" />
