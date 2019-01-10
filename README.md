@@ -5,9 +5,7 @@
 
 #### 基于kotlin的通用dialog
 
-
-之前我是自己Fork了的一个叫[NiceDialog](https://github.com/SheHuan/NiceDialog)的库，
-但是在这基础上自己加了很多功能来自用，但是后来开始用kotlin开发之后，
+开始用kotlin开发之后，
 发现很多东西都能简化，毕竟kotlin的语法糖不能浪费了，所以就有了这个库，
 只要我还在做Android开发，应该会一直维护该库。
 
