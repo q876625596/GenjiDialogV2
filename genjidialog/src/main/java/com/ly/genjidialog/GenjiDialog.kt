@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Looper
-import android.support.annotation.StyleRes
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.*
+import androidx.annotation.StyleRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeightOverStatusBar
@@ -19,7 +19,7 @@ import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogInitMode
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
-import com.trello.rxlifecycle2.components.support.RxDialogFragment
+import com.trello.rxlifecycle3.components.support.RxDialogFragment
 import java.lang.reflect.Field
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -234,9 +234,9 @@ open class GenjiDialog : RxDialogFragment() {
                 return
             }
             //如果没自定义的view动画，那么直接执行
-            //如果设置了防内存泄露，那么只调用dialog.dismiss
+            //如果设置了防内存泄露，那么只调用dialog?.dismiss
             if (dialogOptions.unLeak) {
-                dialog.dismiss()
+                dialog?.dismiss()
                 return
             }
             //如果没有执行过监听操作才执行，并且把监听设为已执行状态
@@ -252,12 +252,12 @@ open class GenjiDialog : RxDialogFragment() {
      * 解决dialog和dialogFragment相互持有message
      */
     private fun clearDialogLeakListener() {
-        //dialog.setOnKeyListener(dialogOptions.onKeyListener)
-        dialog.setOnDismissListener {
+        //dialog?.setOnKeyListener(dialogOptions.onKeyListener)
+        dialog?.setOnDismissListener {
             executeDismissListener()
         }
-        //dialog.setOnCancelListener(null)
-        dialog.setOnShowListener {
+        //dialog?.setOnCancelListener(null)
+        dialog?.setOnShowListener {
             when (dialogOptions.initMode) {
                 DialogInitMode.NORMAL -> {
                     //直接加载
@@ -364,7 +364,7 @@ open class GenjiDialog : RxDialogFragment() {
         }.onAnimatorEnd {
             //退出动画结束时调用super.dismiss()
             if (dialogOptions.unLeak) {
-                dialog.dismiss()
+                dialog?.dismiss()
             } else {
                 if (dismissed.compareAndSet(false, true)) {
                     executeDismissListener()
@@ -381,7 +381,7 @@ open class GenjiDialog : RxDialogFragment() {
      */
     private fun initParams() {
         //设置dialog的初始化数据
-        dialog.window?.let { window ->
+        dialog?.window?.let { window ->
             //设置dialog显示时，布局中view的自定义动画
             dialogOptions.setEnterAnimatorFun?.invoke(window.decorView.findViewById(android.R.id.content))?.let {
                 it.addListener(initAnimatorEnterListener())
@@ -461,7 +461,7 @@ open class GenjiDialog : RxDialogFragment() {
         //设置是否点击外部不消失
         isCancelable = dialogOptions.outCancel
         //设置是否点击屏幕区域不消失（点击返回键可消失）
-        dialog.setCanceledOnTouchOutside(dialogOptions.touchCancel)
+        dialog?.setCanceledOnTouchOutside(dialogOptions.touchCancel)
         //设置按键拦截事件，一般在全屏显示需要重写返回键时用到
         setOnKeyListener()
     }
@@ -494,10 +494,10 @@ open class GenjiDialog : RxDialogFragment() {
                     return false
                 }
             }
-            dialog.setOnKeyListener(onKey)
+            dialog?.setOnKeyListener(onKey)
         } else {//如果不是特殊动画，或者用户自定义了OnKeyListener，那么直接将onKeyListener设置
             dialogOptions.onKeyListener?.apply {
-                dialog.setOnKeyListener(this)
+                dialog?.setOnKeyListener(this)
             }
         }
     }
@@ -519,7 +519,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -549,7 +549,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -581,7 +581,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -613,7 +613,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -645,7 +645,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -671,7 +671,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -698,7 +698,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -726,7 +726,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())
@@ -756,7 +756,7 @@ open class GenjiDialog : RxDialogFragment() {
                 initParams()
                 isDismissed?.set(this, false)
                 isShownByMe?.set(this, true)
-                dialog.show()
+                dialog?.show()
                 this
             } else {
                 super.show(manager, this.hashCode().toString())

@@ -1,6 +1,6 @@
 package com.ly.genjidialogv2;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ly.genjidialog.GenjiDialog;
 import com.ly.genjidialog.other.DialogOptions;

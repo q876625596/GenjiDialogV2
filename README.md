@@ -20,6 +20,14 @@ allprojects {
 }
 ```
 
+##### androidx
+``` groovy
+dependencies {
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.0'
+}
+```
+
+##### support
 ``` groovy
 dependencies {
     implementation 'com.github.q876625596:GenjiDialogV2:1.2.0'
@@ -27,6 +35,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.0   升级到androidx
 
 ##### v1.2.0   同样是重要更新
 

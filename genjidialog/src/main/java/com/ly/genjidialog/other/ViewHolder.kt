@@ -1,6 +1,6 @@
 package com.ly.genjidialog.other
 
-import android.support.annotation.IdRes
+import androidx.annotation.IdRes
 import android.util.SparseArray
 import android.view.View
 import android.widget.CheckBox

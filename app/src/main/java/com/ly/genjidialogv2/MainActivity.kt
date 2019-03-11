@@ -1,13 +1,13 @@
 package com.ly.genjidialogv2
 
-import android.arch.lifecycle.MutableLiveData
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.extensions.*
 import com.ly.genjidialog.other.DialogGravity
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 bindingListenerFun { container, dialog ->
                     Log.e("main", "bind")
                     return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
-                        this.setLifecycleOwner(dialog)
+                        this.lifecycleOwner = dialog
                         this.act = this@MainActivity
                         //setVariable(BR.textStr,"hello")
                         dialog.dialogBinding = this

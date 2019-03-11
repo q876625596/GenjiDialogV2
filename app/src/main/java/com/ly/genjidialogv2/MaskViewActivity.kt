@@ -2,7 +2,7 @@ package com.ly.genjidialogv2
 
 import android.graphics.RectF
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.ly.genjidialog.extensions.convertListenerFun
 import com.ly.genjidialog.extensions.newGenjiDialog
 import com.ly.genjidialog.mask.HighlightArea

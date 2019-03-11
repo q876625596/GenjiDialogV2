@@ -3,8 +3,8 @@ package com.ly.genjidialogv2
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.ly.genjidialog.extensions.UtilsExtension
 import com.ly.genjidialog.extensions.convertListenerFun
