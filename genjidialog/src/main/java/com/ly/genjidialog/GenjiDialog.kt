@@ -61,7 +61,6 @@ open class GenjiDialog : RxDialogFragment() {
     override fun onStart() {
         //防止熄屏之后重启导致再次显示
         if (isDismissed != null && !myIsShow) {
-            Log.e("main", "asssss")
             val myDialog = this.javaClass.superclass.superclass.getDeclaredField("mDialog")
             myDialog.isAccessible = true
             val tempDialog = myDialog.get(this) as Dialog
