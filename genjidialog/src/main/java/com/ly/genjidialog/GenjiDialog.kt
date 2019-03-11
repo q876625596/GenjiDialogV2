@@ -419,8 +419,8 @@ open class GenjiDialog : RxDialogFragment() {
                 } else {
                     //没有占满的时候，设置水平方向的相对边距
                     horizontalMargin = when {
-                        dialogOptions.horizontalMargin < 0 -> 0f
-                        dialogOptions.horizontalMargin in 0..1 -> dialogOptions.horizontalMargin
+                        dialogOptions.horizontalMargin < 0f -> 0f
+                        dialogOptions.horizontalMargin in 0f..1f -> dialogOptions.horizontalMargin
                         else -> dialogOptions.horizontalMargin / getScreenWidth(resources)
                     }
                 }
@@ -431,8 +431,8 @@ open class GenjiDialog : RxDialogFragment() {
                 } else {
                     //没有占满的时候，设置水平方向的相对边距
                     verticalMargin = when {
-                        dialogOptions.verticalMargin < 0 -> 0f
-                        dialogOptions.verticalMargin in 0..1 -> dialogOptions.verticalMargin
+                        dialogOptions.verticalMargin < 0f -> 0f
+                        dialogOptions.verticalMargin in 0f..1f -> dialogOptions.verticalMargin
                         else -> dialogOptions.verticalMargin / getScreenHeight(resources)
                     }
                 }
