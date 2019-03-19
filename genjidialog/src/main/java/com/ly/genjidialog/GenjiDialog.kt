@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.*
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
@@ -304,7 +303,6 @@ open class GenjiDialog : RxDialogFragment() {
      */
     override fun onStop() {
         super.onStop()
-        Log.e("main", "stop")
 
         if (isDismissed == null) {
             myIsShow = false
