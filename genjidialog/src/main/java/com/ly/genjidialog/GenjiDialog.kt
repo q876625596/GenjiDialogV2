@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.*
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.ly.genjidialog.extensions.AnimatorListenerEx
 import com.ly.genjidialog.extensions.UtilsExtension.Companion.getScreenHeight
@@ -18,12 +19,11 @@ import com.ly.genjidialog.other.DialogGravity
 import com.ly.genjidialog.other.DialogInitMode
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
-import com.trello.rxlifecycle3.components.support.RxDialogFragment
 import java.lang.reflect.Field
 import java.util.concurrent.atomic.AtomicBoolean
 
 /*为了方便查看，我将每一个方法和其所需的对应属性放在一起*/
-open class GenjiDialog : RxDialogFragment() {
+open class GenjiDialog : DialogFragment() {
 
     /*根布局*/
     var rootView: View? = null
@@ -60,7 +60,7 @@ open class GenjiDialog : RxDialogFragment() {
     override fun onStart() {
         //防止熄屏之后重启导致再次显示
         if (isDismissed != null && !myIsShow) {
-            val myDialog = this.javaClass.superclass.superclass.getDeclaredField("mDialog")
+            val myDialog = this.javaClass.superclass.getDeclaredField("mDialog")
             myDialog.isAccessible = true
             val tempDialog = myDialog.get(this) as Dialog
             myDialog.set(this, null)
@@ -73,8 +73,8 @@ open class GenjiDialog : RxDialogFragment() {
         initParams()
         //初始化配置
         if (dialogOptions.unLeak && isDismissed == null) {
-            isDismissed = this.javaClass.superclass.superclass.getDeclaredField("mDismissed")
-            isShownByMe = this.javaClass.superclass.superclass.getDeclaredField("mShownByMe")
+            isDismissed = this.javaClass.superclass.getDeclaredField("mDismissed")
+            isShownByMe = this.javaClass.superclass.getDeclaredField("mShownByMe")
             isDismissed?.isAccessible = true
             isShownByMe?.isAccessible = true
         }
