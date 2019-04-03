@@ -93,8 +93,8 @@ open class DialogOptions() : Parcelable {
         setExitAnimatorFun = listener
     }
 
-    /*初始化模式，默认在图形绘制完成后加载*/
-    var initMode: DialogInitMode = DialogInitMode.DRAW_COMPLETE
+    /*初始化模式，默认*/
+    var initMode: DialogInitMode = DialogInitMode.NORMAL
 
     /**
      * dialog的statusBarColor

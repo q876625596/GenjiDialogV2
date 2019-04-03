@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.3'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.4'
 }
 ```
 
@@ -35,6 +35,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.4   kotlin升级到1.3.21，默认初始化模式改为 DialogInitMode.NORMAL
 
 ##### v1.3.3   移除rx
 
