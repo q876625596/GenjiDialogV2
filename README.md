@@ -74,7 +74,7 @@ val testDialog =  newGenjiDialog {
 ``` kotlin
  newGenjiDialog {
     ......
-    initMode = DialogInitMode.DRAW_COMPLETE //DialogInitMode.DRAW_COMPLETE为默认模式
+    initMode = DialogInitMode.DRAW_COMPLETE //DialogInitMode.NORMAL为默认模式
     ......
     }.showOnWindow(supportFragmentManager)
 ```
