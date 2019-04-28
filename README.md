@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.5'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.6'
 }
 ```
 
@@ -41,6 +41,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.6   忘记增加版本号导致jitPack不编译1.3.5版本，重新发布
 
 ##### v1.3.5   kotlin升级到1.3.31,添加混淆，修复unLeak模式下dialog点击空白处关闭后，熄屏再次打开时重新显示的bug，移除onKeyListenerForOptions扩展中的dialog参数
 
