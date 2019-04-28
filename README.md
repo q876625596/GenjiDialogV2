@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.4'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.5'
 }
 ```
 
