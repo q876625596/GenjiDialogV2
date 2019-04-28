@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             val inflater = LayoutInflater.from(this)
-            testDialog = newGenjiDialog {
+            testDialog = newGenjiDialog { genjiDialog ->
                 //layoutId = R.layout.aaa
                 gravity = DialogGravity.CENTER_CENTER
                 animStyle = R.style.BottomTransAlphaADAnimation
@@ -79,9 +79,10 @@ class MainActivity : AppCompatActivity() {
                         Log.e("main", "ppppp")
                     }
                 }
-                onKeyListenerForOptions { dialog, keyCode, event ->
+                onKeyListenerForOptions { keyCode, event ->
                     Log.e("main", keyCode.toString())
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        genjiDialog.dismiss()
                         return@onKeyListenerForOptions true
                     }
                     return@onKeyListenerForOptions false

@@ -54,6 +54,13 @@ open class GenjiDialog : DialogFragment() {
 
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        if (isDismissed != null) {
+            myIsShow = false
+        }
+    }
+
     /**
      *  执行顺序：5
      */
@@ -79,6 +86,7 @@ open class GenjiDialog : DialogFragment() {
             isShownByMe?.isAccessible = true
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -295,6 +303,7 @@ open class GenjiDialog : DialogFragment() {
             clearDialogLeakListener()
         }
     }
+
 
     /**
      * 如果不是主动dismiss，而是点击屏幕或者返回键，

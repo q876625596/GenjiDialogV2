@@ -60,9 +60,9 @@ inline fun DialogOptions.dataConvertListenerFun(crossinline listener: (dialogBin
 /**
  * 设置dataBindingListener的扩展方法
  */
-inline fun DialogOptions.bindingListenerFun(crossinline listener: (container: ViewGroup?,dialog:GenjiDialog) -> View) {
-    val newBindingListener = { container: ViewGroup?,dialog:GenjiDialog ->
-        listener.invoke(container,dialog)
+inline fun DialogOptions.bindingListenerFun(crossinline listener: (container: ViewGroup?, dialog: GenjiDialog) -> View) {
+    val newBindingListener = { container: ViewGroup?, dialog: GenjiDialog ->
+        listener.invoke(container, dialog)
     }
     bindingListener = newBindingListener
 }
@@ -81,10 +81,10 @@ inline fun DialogOptions.addShowDismissListener(key: String, dialogInterface: Di
 /**
  * 设置OnKeyListener的扩展方法
  */
-inline fun DialogOptions.onKeyListenerForOptions(crossinline listener: (dialog: DialogInterface, keyCode: Int, event: KeyEvent) -> Boolean) {
+inline fun DialogOptions.onKeyListenerForOptions(crossinline listener: (keyCode: Int, event: KeyEvent) -> Boolean) {
     val onKey = object : OnKeyListener() {
         override fun onKey(dialog: DialogInterface, keyCode: Int, event: KeyEvent): Boolean {
-            return listener.invoke(dialog, keyCode, event)
+            return listener.invoke(keyCode, event)
         }
     }
     onKeyListener = onKey

@@ -34,7 +34,15 @@ dependencies {
 }
 ```
 
+
+##### 混淆
+```
+-keep public class com.ly.genjidialog.GenjiDialog { *; }
+```
+
 #### 版本更新
+
+##### v1.3.5   kotlin升级到1.3.31,添加混淆，修复unLeak模式下dialog点击空白处关闭后，熄屏再次打开时重新显示的bug，移除onKeyListenerForOptions扩展中的dialog参数
 
 ##### v1.3.4   kotlin升级到1.3.21，默认初始化模式改为 DialogInitMode.NORMAL
 
