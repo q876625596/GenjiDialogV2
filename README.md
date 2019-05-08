@@ -100,7 +100,7 @@ newGenjiDialog {
     //最后返回视图   binding.root
     bindingListenerFun { container, dialog ->
         return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
-            this.setLifecycleOwner(dialog)
+            this.setLifecycleOwner(dialog.viewLifecycleOwner)
             this.textStr = "hello"
             dialog.dialogBinding = this
         }.root
