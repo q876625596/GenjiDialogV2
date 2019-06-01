@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.6'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.7'
 }
 ```
 
@@ -41,6 +41,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.7   修改依附在view上的坐标为屏幕的绝对坐标
 
 ##### v1.3.6   忘记增加版本号导致jitPack不编译1.3.5版本，重新发布
 

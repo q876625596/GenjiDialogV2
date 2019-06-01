@@ -1,8 +1,9 @@
 package com.ly.genjidialogv2
 
+import android.content.res.Resources
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.ly.genjidialog.extensions.convertListenerFun
 import com.ly.genjidialog.extensions.newGenjiDialog
 import com.ly.genjidialog.other.DialogGravity
@@ -26,11 +27,16 @@ class DialogOnViewActivity : AppCompatActivity() {
                }*/
         //window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
+        val resources = Resources.getSystem()
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val statusBarHeight = resources.getDimensionPixelSize(resourceId)
+
         /*******************依附于view显示dialog********************/
         val genji = newGenjiDialog { genjiDialog ->
             layoutId = R.layout.aaa
             width = 329
             height = 252
+            offsetY = -statusBarHeight
             unLeak = true
             convertListenerFun { holder, dialog ->
                 holder.setOnClickListener(R.id.image) {
@@ -38,6 +44,7 @@ class DialogOnViewActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         ltBtn.setOnClickListener {
             genji.showOnView(supportFragmentManager, needHealing, DialogGravity.LEFT_TOP, R.style.ScaleOverShootEnterExitAnimationX100Y100)

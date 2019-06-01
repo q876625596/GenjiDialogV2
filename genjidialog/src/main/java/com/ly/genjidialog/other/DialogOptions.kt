@@ -452,8 +452,10 @@ open class DialogOptions() : Parcelable {
         //设置view的数据
         val viewWidth = view.width
         val viewHeight = view.height
-        val viewX = view.x.toInt()
-        val viewY = view.y.toInt()
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)//获取在整个屏幕内的绝对坐标
+        val viewX = location[0]
+        val viewY = location[1]
         //设置依附于view的位置
         this.gravityAsView = gravityAsView
         //根据gravity判断显示的位置
