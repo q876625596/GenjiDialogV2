@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.7'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.8'
 }
 ```
 
@@ -41,6 +41,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.8   修复沉浸式状态栏无法改变状态栏颜色的问题,更新kotlin到1.3.40
 
 ##### v1.3.7   修改依附在view上的坐标为屏幕的绝对坐标
 
