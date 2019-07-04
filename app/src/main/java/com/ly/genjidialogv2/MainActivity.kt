@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, DialogOnViewActivity::class.java))
         }
         maskSlideBtn.setOnClickListener {
-            ttt.value = "qwer"
-            //startActivity(Intent(this, SlideWindowActivity::class.java))
+            //ttt.value = "qwer"
+            startActivity(Intent(this, SlideWindowActivity::class.java))
         }
         textTest.setOnClickListener {
             Log.e("main", "aaaa")

@@ -2,10 +2,13 @@ package com.ly.genjidialogv2
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.ly.genjidialog.extensions.UtilsExtension
 import com.ly.genjidialog.extensions.convertListenerFun
 import com.ly.genjidialog.extensions.newGenjiDialog
@@ -17,7 +20,21 @@ class SlideWindowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slide)
-
+        (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows = false
+        val decorView = window.decorView
+        val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.statusBarColor = Color.TRANSPARENT
+        decorView.systemUiVisibility = option
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val decorView = window.decorView
+            val vis = decorView.systemUiVisibility
+            decorView.systemUiVisibility = if (true) {
+                vis or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                vis and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            }
+        }
+        //getWindow().setNavigationBarColor(Color.TRANSPARENT);
         /**********带遮罩的滑出动画的dialog *************/
         slideForBottom.setOnClickListener { view ->
             newGenjiDialog { genjiDialog ->
@@ -82,13 +99,14 @@ class SlideWindowActivity : AppCompatActivity() {
             }.showOnWindow(supportFragmentManager)
         }
         slideForTop.setOnClickListener { view ->
-            newGenjiDialog { genjiDialog ->
+            val genjiDialog1 = newGenjiDialog { genjiDialog ->
                 //设置布局
                 layoutId = R.layout.slide_view_top
                 //isLazy = true
                 //设置横纵向占满
                 isFullHorizontal = true
                 isFullVerticalOverStatusBar = true
+                dialogStatusBarColor = Color.BLACK
                 //阴影透明度
                 dimAmount = 0f
                 //处理事件/数据绑定
@@ -146,7 +164,8 @@ class SlideWindowActivity : AppCompatActivity() {
                                         .ofFloat(topTouchView, "alpha", 1f, 0f))
                     }
                 }
-            }.showOnWindow(supportFragmentManager)
+            }
+            genjiDialog1.showOnWindow(supportFragmentManager)
         }
         slideForRight.setOnClickListener { view ->
             newGenjiDialog { genjiDialog ->

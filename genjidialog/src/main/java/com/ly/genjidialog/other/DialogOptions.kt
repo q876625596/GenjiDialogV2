@@ -53,7 +53,8 @@ open class DialogOptions() : Parcelable {
         it.dialogActivity!!.run {
             //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
             if (this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
+                    || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
                 R.style.GenjiDialogFullScreen
             } else {//非沉浸式状态栏（包括普通的带状态栏页面以及全屏无状态栏页面）
                 R.style.GenjiDialog
@@ -265,7 +266,8 @@ open class DialogOptions() : Parcelable {
             genjiDialog.dialogActivity.apply {
                 //如果activity是否是占满全屏并且依旧保留状态栏（沉浸式状态栏）
                 if (this!!.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE) {
+                        || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        || this.window.decorView.systemUiVisibility == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
                     //是否预留statusBar
                     (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0).fitsSystemWindows.let {
                         //（与activity保持一致）
@@ -275,7 +277,7 @@ open class DialogOptions() : Parcelable {
                             //此时可以设置dialogStatusBarColor
                             //genjiDialog.dialog.window.statusBarColor = dialogStatusBarColor
                         } else {//如果不预留statusrBar，那么dialog设置可占满全屏
-                            genjiDialog.dialog?.window?.decorView?.systemUiVisibility = window.decorView.systemUiVisibility
+                            genjiDialog.dialog?.window?.decorView?.systemUiVisibility = this.window.decorView.systemUiVisibility
                         }
                     }
                     //genjiDialog.dialog.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
