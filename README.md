@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.3.8'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.3.9'
 }
 ```
 
@@ -41,6 +41,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.3.9   优化dataBinding的绑定部分
 
 ##### v1.3.8   修复沉浸式状态栏无法改变状态栏颜色的问题,更新kotlin到1.3.40
 

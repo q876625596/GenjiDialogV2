@@ -46,27 +46,19 @@ class MainActivity : AppCompatActivity() {
             }
             val inflater = LayoutInflater.from(this)
             testDialog = newGenjiDialog { genjiDialog ->
-                //layoutId = R.layout.aaa
+                layoutId = R.layout.aaa
                 gravity = DialogGravity.CENTER_CENTER
                 animStyle = R.style.BottomTransAlphaADAnimation
                 unLeak = true
-                bindingListenerFun { container, dialog ->
+                bindingListenerFun(inflater,"",AaaBinding::class) { dialogBinding , dialog ->
                     Log.e("main", "bind")
-                    return@bindingListenerFun DataBindingUtil.inflate<AaaBinding>(inflater, R.layout.aaa, container, false).apply {
-                        this.lifecycleOwner = dialog
-                        this.act = this@MainActivity
-                        //setVariable(BR.textStr,"hello")
-                        dialog.dialogBinding = this
-
-                    }.root
                 }
                 /*outCancel = false
                 touchCancel = false*/
                 /*convertListenerFun { holder, dialog ->
                     Log.e("main", "aaa:${holder.getView<ImageView>(R.id.image)!!.height}")
                 }*/
-                dataConvertListenerFun { dialogBinding, dialog ->
-                    dialogBinding as AaaBinding
+                dataConvertListenerFun(AaaBinding::class) { dialogBinding, dialog ->
                     dialogBinding.image.setOnClickListener {
                         dialog.dismiss()
                     }

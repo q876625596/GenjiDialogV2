@@ -2,8 +2,11 @@ package com.ly.genjidialog.extensions
 
 import android.content.DialogInterface
 import android.view.KeyEvent
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import com.ly.genjidialog.BR
 import com.ly.genjidialog.GenjiDialog
 import com.ly.genjidialog.listener.DataConvertListener
 import com.ly.genjidialog.listener.DialogShowOrDismissListener
@@ -11,6 +14,7 @@ import com.ly.genjidialog.listener.OnKeyListener
 import com.ly.genjidialog.listener.ViewConvertListener
 import com.ly.genjidialog.other.DialogOptions
 import com.ly.genjidialog.other.ViewHolder
+import kotlin.reflect.KClass
 
 /**
  * 创建一个dialog
@@ -48,10 +52,10 @@ inline fun DialogOptions.convertListenerFun(crossinline listener: (holder: ViewH
 /**
  * 设置dataListener的扩展方法
  */
-inline fun DialogOptions.dataConvertListenerFun(crossinline listener: (dialogBinding: Any, dialog: GenjiDialog) -> Unit) {
+inline fun< VB : ViewDataBinding> DialogOptions.dataConvertListenerFun(bindingClass: KClass<VB>,crossinline listener: (dialogBinding: VB, dialog: GenjiDialog) -> Unit) {
     val dataBindingConvertListener = object : DataConvertListener() {
         override fun convertView(dialogBinding: Any, dialog: GenjiDialog) {
-            listener.invoke(dialogBinding, dialog)
+            listener.invoke(dialogBinding as VB, dialog)
         }
     }
     dataConvertListener = dataBindingConvertListener
@@ -60,9 +64,15 @@ inline fun DialogOptions.dataConvertListenerFun(crossinline listener: (dialogBin
 /**
  * 设置dataBindingListener的扩展方法
  */
-inline fun DialogOptions.bindingListenerFun(crossinline listener: (container: ViewGroup?, dialog: GenjiDialog) -> View) {
+inline fun <T : Any, VB : ViewDataBinding> DialogOptions.bindingListenerFun(inflater: LayoutInflater, data: T,
+                                                                            bindingClass: KClass<VB>, crossinline listener: (dialogBinding: VB, dialog: GenjiDialog) -> Unit) {
     val newBindingListener = { container: ViewGroup?, dialog: GenjiDialog ->
-        listener.invoke(container, dialog)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(inflater, layoutId, container, false) as VB
+        binding.setVariable(BR.data, data)
+        binding.lifecycleOwner = dialog
+        listener.invoke(binding, dialog)
+        dialog.dialogBinding = binding
+        binding.root
     }
     bindingListener = newBindingListener
 }
