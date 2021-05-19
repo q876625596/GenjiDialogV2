@@ -189,7 +189,8 @@ open class GenjiDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //加载布局
         if (dialogOptions.bindingListener != null) {
-            return dialogOptions.bindingListener!!.invoke(container, this)
+            rootView = dialogOptions.bindingListener!!.invoke(container, this)
+            return rootView
         }
         rootView = inflater.inflate(dialogOptions.layoutId, container, false)
         return rootView
@@ -350,6 +351,7 @@ open class GenjiDialog : DialogFragment() {
 
     /*进入动画的listener*/
     private lateinit var animatorEnterListener: AnimatorListenerEx
+
     /*退出动画的listener*/
     private lateinit var animatorExitListener: AnimatorListenerEx
 
