@@ -79,7 +79,7 @@ open class GenjiDialog : DialogFragment() {
         myIsShow = true
         initParams()
         //初始化配置
-        if (dialogOptions.unLeak && isDismissed == null) {
+        if (dialogOptions.unLeak && isDismissed == null || dialogOptions.useCommitAllowingStateLoss) {
             isDismissed = this.javaClass.superclass.getDeclaredField("mDismissed")
             isShownByMe = this.javaClass.superclass.getDeclaredField("mShownByMe")
             isDismissed?.isAccessible = true
@@ -530,12 +530,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -560,12 +576,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -592,12 +624,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -624,12 +672,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -656,12 +720,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitNowAllowingStateLoss()
+                }else{
+                    super.showNow(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.showNow(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitNowAllowingStateLoss()
+        }else{
+            super.showNow(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -682,12 +762,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -709,12 +805,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -737,12 +849,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 
@@ -767,12 +895,28 @@ open class GenjiDialog : DialogFragment() {
                 dialog?.show()
                 this
             } else {
-                super.show(manager, this.hashCode().toString())
+                if (dialogOptions.useCommitAllowingStateLoss){
+                    isDismissed?.set(this, false)
+                    isShownByMe?.set(this, true)
+                    val ft = manager.beginTransaction()
+                    ft.add(this, this.hashCode().toString())
+                    ft.commitAllowingStateLoss()
+                }else{
+                    super.show(manager, this.hashCode().toString())
+                }
                 this
             }
         }
         executeShowListener()
-        super.show(manager, this.hashCode().toString())
+        if (dialogOptions.useCommitAllowingStateLoss){
+            isDismissed?.set(this, false)
+            isShownByMe?.set(this, true)
+            val ft = manager.beginTransaction()
+            ft.add(this, this.hashCode().toString())
+            ft.commitAllowingStateLoss()
+        }else{
+            super.show(manager, this.hashCode().toString())
+        }
         return this
     }
 

@@ -41,6 +41,9 @@ open class DialogOptions() : Parcelable {
      */
     var unLeak = false
 
+    //使用commitAllowingStateLoss提交
+    var useCommitAllowingStateLoss  = false
+
     /**
      *  dialog样式
      */

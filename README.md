@@ -23,7 +23,7 @@ allprojects {
 ##### androidx
 ``` groovy
 dependencies {
-    implementation 'com.github.q876625596:GenjiDialogV2:1.4.0'
+    implementation 'com.github.q876625596:GenjiDialogV2:1.4.1'
 }
 ```
 
@@ -41,6 +41,8 @@ dependencies {
 ```
 
 #### 版本更新
+
+##### v1.4.1   优化show
 
 ##### v1.4.0   优化dataBinding的绑定部分2
 
